@@ -2,6 +2,8 @@ package com.example.backend.Entity;
 
 import com.example.backend.Entity.enums.GoalStatus;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.annotations.GenericGenerator;
@@ -12,6 +14,8 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "saving_goals")
+@Getter
+@Setter
 public class SavingGoal {
 
     @Id
@@ -20,19 +24,15 @@ public class SavingGoal {
             name = "uuid",
             strategy = "org.hibernate.id.UUIDGenerator"
     )
-    @Column(length = 36, updatable = false, nullable = false)
+    @Column(length = 36, updatable = false)
     private String id;
 
-    @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false)
     private BigDecimal targetAmount;
 
-    @Column(nullable = false)
     private BigDecimal currentAmount = BigDecimal.ZERO;
 
-    @Column(nullable = false)
     private LocalDate deadline;
 
     private String description;
@@ -41,7 +41,7 @@ public class SavingGoal {
     private GoalStatus status = GoalStatus.ACTIVE;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id")
     private User user;
 
     @CreationTimestamp

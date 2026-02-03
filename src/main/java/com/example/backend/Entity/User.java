@@ -2,6 +2,8 @@ package com.example.backend.Entity;
 
 import com.example.backend.Entity.enums.Role;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.annotations.GenericGenerator;
@@ -11,6 +13,8 @@ import java.util.List;
 
 @Entity
 @Table(name = "users")
+@Getter
+@Setter
 public class User {
 
     @Id
@@ -19,24 +23,20 @@ public class User {
             name = "uuid",
             strategy = "org.hibernate.id.UUIDGenerator"
     )
-    @Column(length = 36, updatable = false, nullable = false)
+    @Column(length = 36, updatable = false)
     private String id;
 
-    @Column(nullable = false)
     private String firstName;
 
-    @Column(nullable = false)
     private String lastName;
 
-    @Column(nullable = false, unique = true)
+    @Column(unique = true)
     private String email;
 
-    @Column(nullable = false)
     private String password;
 
     private String phoneNumber;
 
-    @Column(nullable = false)
     private Boolean active = true;
 
     @Enumerated(EnumType.STRING)

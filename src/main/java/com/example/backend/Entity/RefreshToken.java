@@ -16,17 +16,16 @@ public class RefreshToken {
             name = "uuid",
             strategy = "org.hibernate.id.UUIDGenerator"
     )
-    @Column(length = 36, updatable = false, nullable = false)
+    @Column(length = 36, updatable = false)
     private String id;
 
-    @Column(nullable = false, unique = true)
+    @Column(unique = true)
     private String token;
 
-    @Column(nullable = false)
     private LocalDateTime expiryDate;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id")
     private User user;
 
     @CreationTimestamp

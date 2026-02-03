@@ -2,6 +2,8 @@ package com.example.backend.Entity;
 
 import com.example.backend.Entity.enums.CategoryType;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.annotations.GenericGenerator;
@@ -11,6 +13,8 @@ import java.util.List;
 
 @Entity
 @Table(name = "categories")
+@Getter
+@Setter
 public class Category {
 
     @Id
@@ -19,14 +23,12 @@ public class Category {
             name = "uuid",
             strategy = "org.hibernate.id.UUIDGenerator"
     )
-    @Column(length = 36, updatable = false, nullable = false)
+    @Column(length = 36, updatable = false)
     private String id;
 
-    @Column(nullable = false)
     private String name;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
     private CategoryType type; // INCOME, EXPENSE
 
     private String icon;
@@ -34,7 +36,7 @@ public class Category {
     private String color;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id")
     private User user;
 
     @CreationTimestamp

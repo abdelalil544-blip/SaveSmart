@@ -1,7 +1,10 @@
 package com.example.backend.dto.budget;
 
+import lombok.Data;
+
 import java.math.BigDecimal;
 
+@Data
 public class BudgetResponseDTO {
 
     private String id;

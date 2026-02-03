@@ -1,8 +1,11 @@
 package com.example.backend.dto.user;
 
 import com.example.backend.Entity.enums.Role;
+import lombok.Data;
+
 import java.time.LocalDateTime;
 
+@Data
 public class UserResponseDTO {
 
     private String id;

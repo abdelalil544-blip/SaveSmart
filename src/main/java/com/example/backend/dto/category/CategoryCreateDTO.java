@@ -4,14 +4,16 @@ import com.example.backend.Entity.enums.CategoryType;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.Data;
 
+@Data
 public class CategoryCreateDTO {
 
-    @NotBlank(message = "Le nom est obligatoire")
+    @NotBlank(message = "Name is required")
     @Size(max = 100)
     private String name;
 
-    @NotNull(message = "Le type de catégorie est obligatoire")
+    @NotNull(message = "Category type is required")
     private CategoryType type;
 
     @Size(max = 50)
