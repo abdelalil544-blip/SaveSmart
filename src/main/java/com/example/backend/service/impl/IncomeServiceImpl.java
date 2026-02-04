@@ -6,6 +6,8 @@ import com.example.backend.Entity.User;
 import com.example.backend.dto.income.IncomeCreateDTO;
 import com.example.backend.dto.income.IncomeResponseDTO;
 import com.example.backend.dto.income.IncomeUpdateDTO;
+import com.example.backend.exception.BadRequestException;
+import com.example.backend.exception.ResourceNotFoundException;
 import com.example.backend.mapper.IncomeMapper;
 import com.example.backend.repository.IncomeRepository;
 import com.example.backend.repository.CategoryRepository;
@@ -40,9 +42,9 @@ public class IncomeServiceImpl implements IncomeService {
     @Override
     public IncomeResponseDTO save(String userId, IncomeCreateDTO dto) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("User not found: " + userId));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found: " + userId));
         Category category = categoryRepository.findById(dto.getCategoryId())
-                .orElseThrow(() -> new IllegalArgumentException("Category not found: " + dto.getCategoryId()));
+                .orElseThrow(() -> new ResourceNotFoundException("Category not found: " + dto.getCategoryId()));
         Income income = incomeMapper.toEntity(dto);
         income.setUser(user);
         income.setCategory(category);
@@ -53,7 +55,7 @@ public class IncomeServiceImpl implements IncomeService {
     @Override
     public IncomeResponseDTO update(String id, IncomeUpdateDTO dto) {
         Income income = incomeRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Income not found: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Income not found: " + id));
         if (dto.getAmount() != null) {
             income.setAmount(dto.getAmount());
         }
@@ -65,10 +67,10 @@ public class IncomeServiceImpl implements IncomeService {
         }
         if (dto.getCategoryId() != null) {
             if (dto.getCategoryId().isBlank()) {
-                throw new IllegalArgumentException("Category id must not be blank");
+                throw new BadRequestException("Category id must not be blank");
             }
             Category category = categoryRepository.findById(dto.getCategoryId())
-                    .orElseThrow(() -> new IllegalArgumentException("Category not found: " + dto.getCategoryId()));
+                    .orElseThrow(() -> new ResourceNotFoundException("Category not found: " + dto.getCategoryId()));
             income.setCategory(category);
         }
         Income saved = incomeRepository.save(income);

@@ -6,6 +6,8 @@ import com.example.backend.Entity.User;
 import com.example.backend.dto.expense.ExpenseCreateDTO;
 import com.example.backend.dto.expense.ExpenseResponseDTO;
 import com.example.backend.dto.expense.ExpenseUpdateDTO;
+import com.example.backend.exception.BadRequestException;
+import com.example.backend.exception.ResourceNotFoundException;
 import com.example.backend.mapper.ExpenseMapper;
 import com.example.backend.repository.ExpenseRepository;
 import com.example.backend.repository.CategoryRepository;
@@ -40,9 +42,9 @@ public class ExpenseServiceImpl implements ExpenseService {
     @Override
     public ExpenseResponseDTO save(String userId, ExpenseCreateDTO dto) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("User not found: " + userId));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found: " + userId));
         Category category = categoryRepository.findById(dto.getCategoryId())
-                .orElseThrow(() -> new IllegalArgumentException("Category not found: " + dto.getCategoryId()));
+                .orElseThrow(() -> new ResourceNotFoundException("Category not found: " + dto.getCategoryId()));
         Expense expense = expenseMapper.toEntity(dto);
         expense.setUser(user);
         expense.setCategory(category);
@@ -53,7 +55,7 @@ public class ExpenseServiceImpl implements ExpenseService {
     @Override
     public ExpenseResponseDTO update(String id, ExpenseUpdateDTO dto) {
         Expense expense = expenseRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Expense not found: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Expense not found: " + id));
         if (dto.getAmount() != null) {
             expense.setAmount(dto.getAmount());
         }
@@ -68,10 +70,10 @@ public class ExpenseServiceImpl implements ExpenseService {
         }
         if (dto.getCategoryId() != null) {
             if (dto.getCategoryId().isBlank()) {
-                throw new IllegalArgumentException("Category id must not be blank");
+                throw new BadRequestException("Category id must not be blank");
             }
             Category category = categoryRepository.findById(dto.getCategoryId())
-                    .orElseThrow(() -> new IllegalArgumentException("Category not found: " + dto.getCategoryId()));
+                    .orElseThrow(() -> new ResourceNotFoundException("Category not found: " + dto.getCategoryId()));
             expense.setCategory(category);
         }
         Expense saved = expenseRepository.save(expense);

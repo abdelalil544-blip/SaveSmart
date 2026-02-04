@@ -6,6 +6,7 @@ import com.example.backend.Entity.User;
 import com.example.backend.dto.budget.BudgetCreateDTO;
 import com.example.backend.dto.budget.BudgetResponseDTO;
 import com.example.backend.dto.budget.BudgetUpdateDTO;
+import com.example.backend.exception.ResourceNotFoundException;
 import com.example.backend.mapper.BudgetMapper;
 import com.example.backend.repository.BudgetRepository;
 import com.example.backend.repository.CategoryRepository;
@@ -39,11 +40,11 @@ public class BudgetServiceImpl implements BudgetService {
     @Override
     public BudgetResponseDTO save(String userId, BudgetCreateDTO dto) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("User not found: " + userId));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found: " + userId));
         Category category = null;
         if (dto.getCategoryId() != null && !dto.getCategoryId().isBlank()) {
             category = categoryRepository.findById(dto.getCategoryId())
-                    .orElseThrow(() -> new IllegalArgumentException("Category not found: " + dto.getCategoryId()));
+                    .orElseThrow(() -> new ResourceNotFoundException("Category not found: " + dto.getCategoryId()));
         }
 
         Budget budget = budgetMapper.toEntity(dto);
@@ -56,7 +57,7 @@ public class BudgetServiceImpl implements BudgetService {
     @Override
     public BudgetResponseDTO update(String id, BudgetUpdateDTO dto) {
         Budget budget = budgetRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Budget not found: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Budget not found: " + id));
         if (dto.getBudgetAmount() != null) {
             budget.setBudgetAmount(dto.getBudgetAmount());
         }
@@ -77,7 +78,7 @@ public class BudgetServiceImpl implements BudgetService {
                 budget.setCategory(null);
             } else {
                 Category category = categoryRepository.findById(dto.getCategoryId())
-                        .orElseThrow(() -> new IllegalArgumentException("Category not found: " + dto.getCategoryId()));
+                        .orElseThrow(() -> new ResourceNotFoundException("Category not found: " + dto.getCategoryId()));
                 budget.setCategory(category);
             }
         }

@@ -4,6 +4,7 @@ import com.example.backend.Entity.User;
 import com.example.backend.dto.user.UserCreateDTO;
 import com.example.backend.dto.user.UserResponseDTO;
 import com.example.backend.dto.user.UserUpdateDTO;
+import com.example.backend.exception.ResourceNotFoundException;
 import com.example.backend.mapper.UserMapper;
 import com.example.backend.repository.UserRepository;
 import com.example.backend.service.UserService;
@@ -33,7 +34,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponseDTO update(String id, UserUpdateDTO dto) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("User not found: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found: " + id));
         if (dto.getFirstName() != null) {
             user.setFirstName(dto.getFirstName());
         }

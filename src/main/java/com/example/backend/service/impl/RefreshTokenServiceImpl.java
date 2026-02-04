@@ -5,6 +5,7 @@ import com.example.backend.Entity.User;
 import com.example.backend.dto.refreshtoken.RefreshTokenCreateDTO;
 import com.example.backend.dto.refreshtoken.RefreshTokenResponseDTO;
 import com.example.backend.dto.refreshtoken.RefreshTokenUpdateDTO;
+import com.example.backend.exception.ResourceNotFoundException;
 import com.example.backend.mapper.RefreshTokenMapper;
 import com.example.backend.repository.RefreshTokenRepository;
 import com.example.backend.repository.UserRepository;
@@ -34,7 +35,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     @Override
     public RefreshTokenResponseDTO save(String userId, RefreshTokenCreateDTO dto) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("User not found: " + userId));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found: " + userId));
         RefreshToken refreshToken = refreshTokenMapper.toEntity(dto);
         refreshToken.setUser(user);
         RefreshToken saved = refreshTokenRepository.save(refreshToken);
@@ -44,7 +45,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     @Override
     public RefreshTokenResponseDTO update(String id, RefreshTokenUpdateDTO dto) {
         RefreshToken refreshToken = refreshTokenRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Refresh token not found: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Refresh token not found: " + id));
         if (dto.getToken() != null) {
             refreshToken.setToken(dto.getToken());
         }

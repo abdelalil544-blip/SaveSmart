@@ -6,6 +6,9 @@ import com.example.backend.Entity.enums.Role;
 import com.example.backend.dto.auth.AuthResponseDTO;
 import com.example.backend.dto.auth.LoginRequestDTO;
 import com.example.backend.dto.user.UserCreateDTO;
+import com.example.backend.exception.ConflictException;
+import com.example.backend.exception.TokenExpiredException;
+import com.example.backend.exception.UnauthorizedException;
 import com.example.backend.mapper.UserMapper;
 import com.example.backend.repository.RefreshTokenRepository;
 import com.example.backend.repository.UserRepository;
@@ -53,7 +56,7 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public AuthResponseDTO register(UserCreateDTO dto) {
         if (userRepository.existsByEmail(dto.getEmail())) {
-            throw new IllegalArgumentException("Email already in use");
+            throw new ConflictException("Email already in use");
         }
         User user = userMapper.toEntity(dto);
         user.setPassword(passwordEncoder.encode(dto.getPassword()));
@@ -77,7 +80,7 @@ public class AuthServiceImpl implements AuthService {
                 new UsernamePasswordAuthenticationToken(dto.getEmail(), dto.getPassword())
         );
         User user = userRepository.findByEmail(dto.getEmail())
-                .orElseThrow(() -> new IllegalArgumentException("Invalid credentials"));
+                .orElseThrow(() -> new UnauthorizedException("Invalid credentials"));
 
         String accessToken = jwtService.generateToken(user);
         refreshTokenRepository.deleteByUserId(user.getId());
@@ -93,10 +96,10 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public AuthResponseDTO refresh(String refreshToken) {
         RefreshToken token = refreshTokenRepository.findByToken(refreshToken)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid refresh token"));
+                .orElseThrow(() -> new UnauthorizedException("Invalid refresh token"));
         if (token.getExpiryDate().isBefore(LocalDateTime.now())) {
             refreshTokenRepository.deleteById(token.getId());
-            throw new IllegalArgumentException("Refresh token expired");
+            throw new TokenExpiredException("Refresh token expired");
         }
 
         User user = token.getUser();

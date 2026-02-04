@@ -6,6 +6,7 @@ import com.example.backend.Entity.User;
 import com.example.backend.dto.category.CategoryCreateDTO;
 import com.example.backend.dto.category.CategoryResponseDTO;
 import com.example.backend.dto.category.CategoryUpdateDTO;
+import com.example.backend.exception.ResourceNotFoundException;
 import com.example.backend.mapper.CategoryMapper;
 import com.example.backend.repository.CategoryRepository;
 import com.example.backend.repository.UserRepository;
@@ -35,7 +36,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public CategoryResponseDTO save(String userId, CategoryCreateDTO dto) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("User not found: " + userId));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found: " + userId));
         Category category = categoryMapper.toEntity(dto);
         category.setUser(user);
         Category saved = categoryRepository.save(category);
@@ -45,7 +46,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public CategoryResponseDTO update(String id, CategoryUpdateDTO dto) {
         Category category = categoryRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Category not found: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Category not found: " + id));
         if (dto.getName() != null) {
             category.setName(dto.getName());
         }

@@ -6,6 +6,7 @@ import com.example.backend.Entity.User;
 import com.example.backend.dto.savinggoal.SavingGoalCreateDTO;
 import com.example.backend.dto.savinggoal.SavingGoalResponseDTO;
 import com.example.backend.dto.savinggoal.SavingGoalUpdateDTO;
+import com.example.backend.exception.ResourceNotFoundException;
 import com.example.backend.mapper.SavingGoalMapper;
 import com.example.backend.repository.SavingGoalRepository;
 import com.example.backend.repository.UserRepository;
@@ -36,7 +37,7 @@ public class SavingGoalServiceImpl implements SavingGoalService {
     @Override
     public SavingGoalResponseDTO save(String userId, SavingGoalCreateDTO dto) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("User not found: " + userId));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found: " + userId));
         SavingGoal savingGoal = savingGoalMapper.toEntity(dto);
         if (savingGoal.getCurrentAmount() == null) {
             savingGoal.setCurrentAmount(BigDecimal.ZERO);
@@ -52,7 +53,7 @@ public class SavingGoalServiceImpl implements SavingGoalService {
     @Override
     public SavingGoalResponseDTO update(String id, SavingGoalUpdateDTO dto) {
         SavingGoal savingGoal = savingGoalRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Saving goal not found: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Saving goal not found: " + id));
         if (dto.getName() != null) {
             savingGoal.setName(dto.getName());
         }
