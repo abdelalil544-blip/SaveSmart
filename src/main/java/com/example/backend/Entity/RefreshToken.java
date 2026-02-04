@@ -1,6 +1,8 @@
 package com.example.backend.Entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -8,6 +10,8 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "refresh_tokens")
+@Getter
+@Setter
 public class RefreshToken {
 
     @Id
