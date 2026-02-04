@@ -17,6 +17,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -110,11 +111,17 @@ public class AuthServiceImpl implements AuthService {
         return response;
     }
 
+    @Override
+    public void logout(String refreshToken) {
+        refreshTokenRepository.findByToken(refreshToken)
+                .ifPresent(token -> refreshTokenRepository.deleteById(token.getId()));
+    }
+
     private String createRefreshToken(User user) {
         RefreshToken refreshToken = new RefreshToken();
         refreshToken.setUser(user);
         refreshToken.setToken(UUID.randomUUID().toString());
-        refreshToken.setExpiryDate(LocalDateTime.now().plusMillis(refreshExpirationMs));
+        refreshToken.setExpiryDate(LocalDateTime.now().plus(Duration.ofMillis(refreshExpirationMs)));
         RefreshToken saved = refreshTokenRepository.save(refreshToken);
         return saved.getToken();
     }
