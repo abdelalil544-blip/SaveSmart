@@ -5,6 +5,7 @@ import com.example.backend.Entity.Expense;
 import com.example.backend.Entity.User;
 import com.example.backend.dto.expense.ExpenseCreateDTO;
 import com.example.backend.dto.expense.ExpenseResponseDTO;
+import com.example.backend.dto.expense.ExpenseUpdateDTO;
 import com.example.backend.mapper.ExpenseMapper;
 import com.example.backend.repository.ExpenseRepository;
 import com.example.backend.repository.CategoryRepository;
@@ -45,6 +46,34 @@ public class ExpenseServiceImpl implements ExpenseService {
         Expense expense = expenseMapper.toEntity(dto);
         expense.setUser(user);
         expense.setCategory(category);
+        Expense saved = expenseRepository.save(expense);
+        return expenseMapper.toResponseDTO(saved);
+    }
+
+    @Override
+    public ExpenseResponseDTO update(String id, ExpenseUpdateDTO dto) {
+        Expense expense = expenseRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Expense not found: " + id));
+        if (dto.getAmount() != null) {
+            expense.setAmount(dto.getAmount());
+        }
+        if (dto.getDate() != null) {
+            expense.setDate(dto.getDate());
+        }
+        if (dto.getDescription() != null) {
+            expense.setDescription(dto.getDescription());
+        }
+        if (dto.getNote() != null) {
+            expense.setNote(dto.getNote());
+        }
+        if (dto.getCategoryId() != null) {
+            if (dto.getCategoryId().isBlank()) {
+                throw new IllegalArgumentException("Category id must not be blank");
+            }
+            Category category = categoryRepository.findById(dto.getCategoryId())
+                    .orElseThrow(() -> new IllegalArgumentException("Category not found: " + dto.getCategoryId()));
+            expense.setCategory(category);
+        }
         Expense saved = expenseRepository.save(expense);
         return expenseMapper.toResponseDTO(saved);
     }

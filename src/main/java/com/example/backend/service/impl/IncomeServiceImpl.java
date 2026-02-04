@@ -5,6 +5,7 @@ import com.example.backend.Entity.Income;
 import com.example.backend.Entity.User;
 import com.example.backend.dto.income.IncomeCreateDTO;
 import com.example.backend.dto.income.IncomeResponseDTO;
+import com.example.backend.dto.income.IncomeUpdateDTO;
 import com.example.backend.mapper.IncomeMapper;
 import com.example.backend.repository.IncomeRepository;
 import com.example.backend.repository.CategoryRepository;
@@ -45,6 +46,31 @@ public class IncomeServiceImpl implements IncomeService {
         Income income = incomeMapper.toEntity(dto);
         income.setUser(user);
         income.setCategory(category);
+        Income saved = incomeRepository.save(income);
+        return incomeMapper.toResponseDTO(saved);
+    }
+
+    @Override
+    public IncomeResponseDTO update(String id, IncomeUpdateDTO dto) {
+        Income income = incomeRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Income not found: " + id));
+        if (dto.getAmount() != null) {
+            income.setAmount(dto.getAmount());
+        }
+        if (dto.getDate() != null) {
+            income.setDate(dto.getDate());
+        }
+        if (dto.getDescription() != null) {
+            income.setDescription(dto.getDescription());
+        }
+        if (dto.getCategoryId() != null) {
+            if (dto.getCategoryId().isBlank()) {
+                throw new IllegalArgumentException("Category id must not be blank");
+            }
+            Category category = categoryRepository.findById(dto.getCategoryId())
+                    .orElseThrow(() -> new IllegalArgumentException("Category not found: " + dto.getCategoryId()));
+            income.setCategory(category);
+        }
         Income saved = incomeRepository.save(income);
         return incomeMapper.toResponseDTO(saved);
     }

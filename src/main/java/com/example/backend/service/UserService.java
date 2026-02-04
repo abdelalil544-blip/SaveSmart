@@ -2,12 +2,15 @@ package com.example.backend.service;
 
 import com.example.backend.dto.user.UserCreateDTO;
 import com.example.backend.dto.user.UserResponseDTO;
+import com.example.backend.dto.user.UserUpdateDTO;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface UserService {
     UserResponseDTO save(UserCreateDTO dto);
+
+    UserResponseDTO update(String id, UserUpdateDTO dto);
 
     Optional<UserResponseDTO> findById(String id);
 

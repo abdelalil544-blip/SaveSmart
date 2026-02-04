@@ -5,6 +5,7 @@ import com.example.backend.Entity.Category;
 import com.example.backend.Entity.User;
 import com.example.backend.dto.category.CategoryCreateDTO;
 import com.example.backend.dto.category.CategoryResponseDTO;
+import com.example.backend.dto.category.CategoryUpdateDTO;
 import com.example.backend.mapper.CategoryMapper;
 import com.example.backend.repository.CategoryRepository;
 import com.example.backend.repository.UserRepository;
@@ -37,6 +38,26 @@ public class CategoryServiceImpl implements CategoryService {
                 .orElseThrow(() -> new IllegalArgumentException("User not found: " + userId));
         Category category = categoryMapper.toEntity(dto);
         category.setUser(user);
+        Category saved = categoryRepository.save(category);
+        return categoryMapper.toResponseDTO(saved);
+    }
+
+    @Override
+    public CategoryResponseDTO update(String id, CategoryUpdateDTO dto) {
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Category not found: " + id));
+        if (dto.getName() != null) {
+            category.setName(dto.getName());
+        }
+        if (dto.getType() != null) {
+            category.setType(dto.getType());
+        }
+        if (dto.getIcon() != null) {
+            category.setIcon(dto.getIcon());
+        }
+        if (dto.getColor() != null) {
+            category.setColor(dto.getColor());
+        }
         Category saved = categoryRepository.save(category);
         return categoryMapper.toResponseDTO(saved);
     }

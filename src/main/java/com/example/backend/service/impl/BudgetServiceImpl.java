@@ -5,6 +5,7 @@ import com.example.backend.Entity.Category;
 import com.example.backend.Entity.User;
 import com.example.backend.dto.budget.BudgetCreateDTO;
 import com.example.backend.dto.budget.BudgetResponseDTO;
+import com.example.backend.dto.budget.BudgetUpdateDTO;
 import com.example.backend.mapper.BudgetMapper;
 import com.example.backend.repository.BudgetRepository;
 import com.example.backend.repository.CategoryRepository;
@@ -48,6 +49,38 @@ public class BudgetServiceImpl implements BudgetService {
         Budget budget = budgetMapper.toEntity(dto);
         budget.setUser(user);
         budget.setCategory(category);
+        Budget saved = budgetRepository.save(budget);
+        return budgetMapper.toResponseDTO(saved);
+    }
+
+    @Override
+    public BudgetResponseDTO update(String id, BudgetUpdateDTO dto) {
+        Budget budget = budgetRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Budget not found: " + id));
+        if (dto.getBudgetAmount() != null) {
+            budget.setBudgetAmount(dto.getBudgetAmount());
+        }
+        if (dto.getMonth() != null) {
+            budget.setMonth(dto.getMonth());
+        }
+        if (dto.getYear() != null) {
+            budget.setYear(dto.getYear());
+        }
+        if (dto.getIsGlobal() != null) {
+            budget.setIsGlobal(dto.getIsGlobal());
+            if (dto.getIsGlobal()) {
+                budget.setCategory(null);
+            }
+        }
+        if (dto.getCategoryId() != null) {
+            if (dto.getCategoryId().isBlank()) {
+                budget.setCategory(null);
+            } else {
+                Category category = categoryRepository.findById(dto.getCategoryId())
+                        .orElseThrow(() -> new IllegalArgumentException("Category not found: " + dto.getCategoryId()));
+                budget.setCategory(category);
+            }
+        }
         Budget saved = budgetRepository.save(budget);
         return budgetMapper.toResponseDTO(saved);
     }

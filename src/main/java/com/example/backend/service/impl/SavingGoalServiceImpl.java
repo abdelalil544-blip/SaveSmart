@@ -5,6 +5,7 @@ import com.example.backend.Entity.SavingGoal;
 import com.example.backend.Entity.User;
 import com.example.backend.dto.savinggoal.SavingGoalCreateDTO;
 import com.example.backend.dto.savinggoal.SavingGoalResponseDTO;
+import com.example.backend.dto.savinggoal.SavingGoalUpdateDTO;
 import com.example.backend.mapper.SavingGoalMapper;
 import com.example.backend.repository.SavingGoalRepository;
 import com.example.backend.repository.UserRepository;
@@ -44,6 +45,32 @@ public class SavingGoalServiceImpl implements SavingGoalService {
             savingGoal.setStatus(GoalStatus.ACTIVE);
         }
         savingGoal.setUser(user);
+        SavingGoal saved = savingGoalRepository.save(savingGoal);
+        return savingGoalMapper.toResponseDTO(saved);
+    }
+
+    @Override
+    public SavingGoalResponseDTO update(String id, SavingGoalUpdateDTO dto) {
+        SavingGoal savingGoal = savingGoalRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Saving goal not found: " + id));
+        if (dto.getName() != null) {
+            savingGoal.setName(dto.getName());
+        }
+        if (dto.getTargetAmount() != null) {
+            savingGoal.setTargetAmount(dto.getTargetAmount());
+        }
+        if (dto.getCurrentAmount() != null) {
+            savingGoal.setCurrentAmount(dto.getCurrentAmount());
+        }
+        if (dto.getDeadline() != null) {
+            savingGoal.setDeadline(dto.getDeadline());
+        }
+        if (dto.getDescription() != null) {
+            savingGoal.setDescription(dto.getDescription());
+        }
+        if (dto.getStatus() != null) {
+            savingGoal.setStatus(dto.getStatus());
+        }
         SavingGoal saved = savingGoalRepository.save(savingGoal);
         return savingGoalMapper.toResponseDTO(saved);
     }

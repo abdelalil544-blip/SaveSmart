@@ -3,6 +3,7 @@ package com.example.backend.service.impl;
 import com.example.backend.Entity.User;
 import com.example.backend.dto.user.UserCreateDTO;
 import com.example.backend.dto.user.UserResponseDTO;
+import com.example.backend.dto.user.UserUpdateDTO;
 import com.example.backend.mapper.UserMapper;
 import com.example.backend.repository.UserRepository;
 import com.example.backend.service.UserService;
@@ -25,6 +26,35 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponseDTO save(UserCreateDTO dto) {
         User user = userMapper.toEntity(dto);
+        User saved = userRepository.save(user);
+        return userMapper.toResponseDTO(saved);
+    }
+
+    @Override
+    public UserResponseDTO update(String id, UserUpdateDTO dto) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("User not found: " + id));
+        if (dto.getFirstName() != null) {
+            user.setFirstName(dto.getFirstName());
+        }
+        if (dto.getLastName() != null) {
+            user.setLastName(dto.getLastName());
+        }
+        if (dto.getEmail() != null) {
+            user.setEmail(dto.getEmail());
+        }
+        if (dto.getPassword() != null) {
+            user.setPassword(dto.getPassword());
+        }
+        if (dto.getPhoneNumber() != null) {
+            user.setPhoneNumber(dto.getPhoneNumber());
+        }
+        if (dto.getActive() != null) {
+            user.setActive(dto.getActive());
+        }
+        if (dto.getRole() != null) {
+            user.setRole(dto.getRole());
+        }
         User saved = userRepository.save(user);
         return userMapper.toResponseDTO(saved);
     }
