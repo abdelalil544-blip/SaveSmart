@@ -1,0 +1,22 @@
+package com.example.backend.service;
+
+import com.example.backend.Entity.enums.GoalStatus;
+import com.example.backend.dto.savinggoal.SavingGoalCreateDTO;
+import com.example.backend.dto.savinggoal.SavingGoalResponseDTO;
+
+import java.util.List;
+import java.util.Optional;
+
+public interface SavingGoalService {
+    SavingGoalResponseDTO save(String userId, SavingGoalCreateDTO dto);
+
+    Optional<SavingGoalResponseDTO> findById(String id);
+
+    List<SavingGoalResponseDTO> findAll();
+
+    void deleteById(String id);
+
+    List<SavingGoalResponseDTO> findByUserId(String userId);
+
+    List<SavingGoalResponseDTO> findByUserIdAndStatus(String userId, GoalStatus status);
+}
