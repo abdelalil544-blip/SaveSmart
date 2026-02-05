@@ -1,6 +1,7 @@
 package com.example.backend.service;
 
 import com.example.backend.Entity.enums.GoalStatus;
+import com.example.backend.dto.savinggoal.GoalProgressResponseDTO;
 import com.example.backend.dto.savinggoal.SavingGoalCreateDTO;
 import com.example.backend.dto.savinggoal.SavingGoalResponseDTO;
 import com.example.backend.dto.savinggoal.SavingGoalUpdateDTO;
@@ -22,4 +23,6 @@ public interface SavingGoalService {
     List<SavingGoalResponseDTO> findByUserId(String userId);
 
     List<SavingGoalResponseDTO> findByUserIdAndStatus(String userId, GoalStatus status);
+
+    GoalProgressResponseDTO getGoalProgress(String id);
 }

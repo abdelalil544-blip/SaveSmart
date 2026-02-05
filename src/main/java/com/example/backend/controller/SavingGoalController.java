@@ -1,6 +1,7 @@
 package com.example.backend.controller;
 
 import com.example.backend.Entity.enums.GoalStatus;
+import com.example.backend.dto.savinggoal.GoalProgressResponseDTO;
 import com.example.backend.dto.savinggoal.SavingGoalCreateDTO;
 import com.example.backend.dto.savinggoal.SavingGoalResponseDTO;
 import com.example.backend.dto.savinggoal.SavingGoalUpdateDTO;
@@ -68,6 +69,11 @@ public class SavingGoalController {
             @RequestParam GoalStatus status
     ) {
         return ResponseEntity.ok(savingGoalService.findByUserIdAndStatus(userId, status));
+    }
+
+    @GetMapping("/{id}/progress")
+    public ResponseEntity<GoalProgressResponseDTO> getProgress(@PathVariable String id) {
+        return ResponseEntity.ok(savingGoalService.getGoalProgress(id));
     }
 
     @DeleteMapping("/{id}")

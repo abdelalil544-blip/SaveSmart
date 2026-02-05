@@ -3,6 +3,7 @@ package com.example.backend.service.impl;
 import com.example.backend.Entity.enums.GoalStatus;
 import com.example.backend.Entity.SavingGoal;
 import com.example.backend.Entity.User;
+import com.example.backend.dto.savinggoal.GoalProgressResponseDTO;
 import com.example.backend.dto.savinggoal.SavingGoalCreateDTO;
 import com.example.backend.dto.savinggoal.SavingGoalResponseDTO;
 import com.example.backend.dto.savinggoal.SavingGoalUpdateDTO;
@@ -14,6 +15,7 @@ import com.example.backend.service.SavingGoalService;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 import java.util.Optional;
 
@@ -105,5 +107,32 @@ public class SavingGoalServiceImpl implements SavingGoalService {
         return savingGoalRepository.findByUserIdAndStatus(userId, status).stream()
                 .map(savingGoalMapper::toResponseDTO)
                 .toList();
+    }
+
+    @Override
+    public GoalProgressResponseDTO getGoalProgress(String id) {
+        SavingGoal goal = savingGoalRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Saving goal not found: " + id));
+        GoalProgressResponseDTO response = new GoalProgressResponseDTO();
+        response.setTotal(goal.getCurrentAmount());
+        response.setStatus(goal.getStatus());
+
+        if (goal.getTargetAmount() == null || goal.getTargetAmount().signum() == 0) {
+            response.setPercent(BigDecimal.ZERO);
+            response.setRemaining(BigDecimal.ZERO);
+            return response;
+        }
+
+        BigDecimal percent = goal.getCurrentAmount()
+                .multiply(BigDecimal.valueOf(100))
+                .divide(goal.getTargetAmount(), 2, RoundingMode.HALF_UP);
+        BigDecimal remaining = goal.getTargetAmount().subtract(goal.getCurrentAmount());
+        if (remaining.signum() < 0) {
+            remaining = BigDecimal.ZERO;
+        }
+
+        response.setPercent(percent);
+        response.setRemaining(remaining);
+        return response;
     }
 }
