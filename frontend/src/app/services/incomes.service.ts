@@ -3,35 +3,12 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 import { API_BASE_URL } from '../core/api.config';
-
-export interface IncomeCreate {
-  amount: number;
-  date: string;
-  description?: string;
-  categoryId: string;
-}
-
-export interface IncomeUpdate {
-  amount?: number;
-  date?: string;
-  description?: string;
-  categoryId?: string;
-}
-
-export interface IncomeResponse {
-  id: string;
-  amount: number;
-  date: string;
-  description?: string;
-  categoryId?: string;
-  userId?: string;
-}
-
-export interface MonthlyIncomeResponse {
-  year: number;
-  month: number;
-  total: number;
-}
+import {
+  IncomeCreate,
+  IncomeResponse,
+  IncomeUpdate,
+  MonthlyIncomeResponse
+} from '../models/incomes.models';
 
 @Injectable({ providedIn: 'root' })
 export class IncomesService {

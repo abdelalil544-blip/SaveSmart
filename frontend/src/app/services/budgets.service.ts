@@ -3,32 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 import { API_BASE_URL } from '../core/api.config';
-
-export interface BudgetCreate {
-  budgetAmount: number;
-  month: number;
-  year: number;
-  categoryId?: string;
-  isGlobal?: boolean;
-}
-
-export interface BudgetUpdate {
-  budgetAmount?: number;
-  month?: number;
-  year?: number;
-  categoryId?: string;
-  isGlobal?: boolean;
-}
-
-export interface BudgetResponse {
-  id: string;
-  budgetAmount: number;
-  month: number;
-  year: number;
-  categoryId?: string;
-  isGlobal?: boolean;
-  userId?: string;
-}
+import { BudgetCreate, BudgetResponse, BudgetUpdate } from '../models/budgets.models';
 
 @Injectable({ providedIn: 'root' })
 export class BudgetsService {

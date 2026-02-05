@@ -3,32 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 import { API_BASE_URL } from '../core/api.config';
-
-export interface ExpenseCreate {
-  amount: number;
-  date: string;
-  description?: string;
-  note?: string;
-  categoryId: string;
-}
-
-export interface ExpenseUpdate {
-  amount?: number;
-  date?: string;
-  description?: string;
-  note?: string;
-  categoryId?: string;
-}
-
-export interface ExpenseResponse {
-  id: string;
-  amount: number;
-  date: string;
-  description?: string;
-  note?: string;
-  categoryId?: string;
-  userId?: string;
-}
+import { ExpenseCreate, ExpenseResponse, ExpenseUpdate } from '../models/expenses.models';
 
 @Injectable({ providedIn: 'root' })
 export class ExpensesService {

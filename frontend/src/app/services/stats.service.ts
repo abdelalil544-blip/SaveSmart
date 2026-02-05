@@ -3,25 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 import { API_BASE_URL } from '../core/api.config';
-
-export interface MonthlyStatsResponse {
-  year: number;
-  month: number;
-  totalIncome: number;
-  totalExpense: number;
-  net: number;
-  budgetTotal: number;
-  budgetRemaining: number;
-}
-
-export interface AnnualStatsResponse {
-  year: number;
-  totalIncome: number;
-  totalExpense: number;
-  net: number;
-  budgetTotal: number;
-  budgetRemaining: number;
-}
+import { AnnualStatsResponse, MonthlyStatsResponse } from '../models/stats.models';
 
 @Injectable({ providedIn: 'root' })
 export class StatsService {
