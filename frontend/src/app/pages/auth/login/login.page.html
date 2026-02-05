@@ -1,0 +1,72 @@
+<div class="min-h-screen bg-slate-950 text-slate-100">
+  <div class="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(14,165,233,0.2),_transparent_40%)]">
+    <div class="mx-auto flex min-h-screen max-w-6xl items-center justify-center px-6 py-16">
+      <div class="w-full max-w-md rounded-3xl border border-slate-800 bg-slate-900/70 p-8 shadow-2xl shadow-slate-950/50 backdrop-blur">
+        <div class="space-y-3">
+          <p class="text-xs uppercase tracking-[0.2em] text-slate-400">SaveSmart</p>
+          <h1 class="text-3xl font-semibold tracking-tight">Connexion</h1>
+          <p class="text-sm text-slate-400">
+            Connecte-toi pour suivre tes depenses et revenus en temps reel.
+          </p>
+        </div>
+
+        @if (errorMessage()) {
+          <div class="mt-4 rounded-2xl border border-rose-500/40 bg-rose-500/10 px-4 py-3 text-sm text-rose-200">
+            {{ errorMessage() }}
+          </div>
+        }
+
+        @if (successMessage()) {
+          <div class="mt-4 rounded-2xl border border-emerald-500/40 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-200">
+            {{ successMessage() }}
+          </div>
+        }
+
+        <form class="mt-6 space-y-4" [formGroup]="loginForm" (ngSubmit)="submitLogin()">
+          <label class="block space-y-2 text-sm">
+            <span class="text-slate-300">Email</span>
+            <input
+              type="email"
+              formControlName="email"
+              class="w-full rounded-2xl border border-slate-800 bg-slate-950/50 px-4 py-3 text-sm text-slate-100 outline-none transition focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20"
+              placeholder="ex: nom@mail.com"
+            />
+            @if (loginForm.controls.email.touched && loginForm.controls.email.invalid) {
+              <span class="text-xs text-rose-300">Email requis.</span>
+            }
+          </label>
+
+          <label class="block space-y-2 text-sm">
+            <span class="text-slate-300">Mot de passe</span>
+            <input
+              type="password"
+              formControlName="password"
+              class="w-full rounded-2xl border border-slate-800 bg-slate-950/50 px-4 py-3 text-sm text-slate-100 outline-none transition focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20"
+              placeholder="8 caracteres minimum"
+            />
+            @if (loginForm.controls.password.touched && loginForm.controls.password.invalid) {
+              <span class="text-xs text-rose-300">Mot de passe requis.</span>
+            }
+          </label>
+
+          <button
+            type="submit"
+            class="w-full rounded-2xl bg-cyan-500 px-4 py-3 text-sm font-semibold text-slate-950 transition hover:bg-cyan-400 disabled:cursor-not-allowed disabled:opacity-70"
+            [disabled]="isLoading()"
+          >
+            @if (isLoading()) {
+              Chargement...
+            } @else {
+              Se connecter
+            }
+          </button>
+        </form>
+
+        <p class="mt-6 text-center text-sm text-slate-400">
+          Pas encore de compte ?
+          <a class="text-cyan-300 hover:text-cyan-200" routerLink="/register">S'inscrire</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>

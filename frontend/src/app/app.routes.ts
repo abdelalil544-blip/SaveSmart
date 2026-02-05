@@ -3,11 +3,15 @@ import { Routes } from '@angular/router';
 export const routes: Routes = [
   {
     path: '',
-    redirectTo: 'auth',
+    redirectTo: 'login',
     pathMatch: 'full'
   },
   {
-    path: 'auth',
-    loadComponent: () => import('./pages/auth/auth.page').then((m) => m.AuthPage)
+    path: 'login',
+    loadComponent: () => import('./pages/auth/login/login.page').then((m) => m.LoginPage)
+  },
+  {
+    path: 'register',
+    loadComponent: () => import('./pages/auth/register/register.page').then((m) => m.RegisterPage)
   }
 ];
