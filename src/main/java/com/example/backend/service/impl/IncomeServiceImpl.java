@@ -6,6 +6,7 @@ import com.example.backend.Entity.User;
 import com.example.backend.dto.income.IncomeCreateDTO;
 import com.example.backend.dto.income.IncomeResponseDTO;
 import com.example.backend.dto.income.IncomeUpdateDTO;
+import com.example.backend.dto.income.MonthlyIncomeResponseDTO;
 import com.example.backend.exception.BadRequestException;
 import com.example.backend.exception.ResourceNotFoundException;
 import com.example.backend.mapper.IncomeMapper;
@@ -16,6 +17,7 @@ import com.example.backend.service.IncomeService;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -113,5 +115,21 @@ public class IncomeServiceImpl implements IncomeService {
         return incomeRepository.findByUserIdAndCategoryId(userId, categoryId).stream()
                 .map(incomeMapper::toResponseDTO)
                 .toList();
+    }
+
+    @Override
+    public MonthlyIncomeResponseDTO getMonthlyIncome(String userId, int year, int month) {
+        if (month < 1 || month > 12) {
+            throw new BadRequestException("Month must be between 1 and 12");
+        }
+        LocalDate start = LocalDate.of(year, month, 1);
+        LocalDate end = start.withDayOfMonth(start.lengthOfMonth());
+        BigDecimal total = incomeRepository.sumByUserIdAndDateBetween(userId, start, end);
+
+        MonthlyIncomeResponseDTO response = new MonthlyIncomeResponseDTO();
+        response.setYear(year);
+        response.setMonth(month);
+        response.setTotal(total);
+        return response;
     }
 }

@@ -3,6 +3,7 @@ package com.example.backend.service;
 import com.example.backend.dto.income.IncomeCreateDTO;
 import com.example.backend.dto.income.IncomeResponseDTO;
 import com.example.backend.dto.income.IncomeUpdateDTO;
+import com.example.backend.dto.income.MonthlyIncomeResponseDTO;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -24,4 +25,6 @@ public interface IncomeService {
     List<IncomeResponseDTO> findByUserIdAndDateBetween(String userId, LocalDate startDate, LocalDate endDate);
 
     List<IncomeResponseDTO> findByUserIdAndCategoryId(String userId, String categoryId);
+
+    MonthlyIncomeResponseDTO getMonthlyIncome(String userId, int year, int month);
 }

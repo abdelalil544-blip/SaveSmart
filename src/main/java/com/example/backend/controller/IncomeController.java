@@ -3,6 +3,7 @@ package com.example.backend.controller;
 import com.example.backend.dto.income.IncomeCreateDTO;
 import com.example.backend.dto.income.IncomeResponseDTO;
 import com.example.backend.dto.income.IncomeUpdateDTO;
+import com.example.backend.dto.income.MonthlyIncomeResponseDTO;
 import com.example.backend.service.IncomeService;
 import jakarta.validation.Valid;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -78,6 +79,15 @@ public class IncomeController {
             @RequestParam String categoryId
     ) {
         return ResponseEntity.ok(incomeService.findByUserIdAndCategoryId(userId, categoryId));
+    }
+
+    @GetMapping("/monthly")
+    public ResponseEntity<MonthlyIncomeResponseDTO> getMonthlyIncome(
+            @RequestParam String userId,
+            @RequestParam int year,
+            @RequestParam int month
+    ) {
+        return ResponseEntity.ok(incomeService.getMonthlyIncome(userId, year, month));
     }
 
     @DeleteMapping("/{id}")
