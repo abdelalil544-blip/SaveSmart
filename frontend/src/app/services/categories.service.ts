@@ -3,30 +3,12 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 import { API_BASE_URL } from '../core/api.config';
-
-export type CategoryType = 'INCOME' | 'EXPENSE';
-
-export interface CategoryCreate {
-  name: string;
-  type: CategoryType;
-  icon?: string;
-  color?: string;
-}
-
-export interface CategoryUpdate {
-  name?: string;
-  type?: CategoryType;
-  icon?: string;
-  color?: string;
-}
-
-export interface CategoryResponse {
-  id: string;
-  name: string;
-  type: CategoryType;
-  icon?: string;
-  color?: string;
-}
+import {
+  CategoryCreate,
+  CategoryResponse,
+  CategoryType,
+  CategoryUpdate
+} from '../models/categories.models';
 
 @Injectable({ providedIn: 'root' })
 export class CategoriesService {
