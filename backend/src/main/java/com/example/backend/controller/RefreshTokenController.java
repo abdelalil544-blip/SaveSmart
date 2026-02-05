@@ -6,6 +6,7 @@ import com.example.backend.dto.refreshtoken.RefreshTokenUpdateDTO;
 import com.example.backend.service.RefreshTokenService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,6 +21,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/refresh-tokens")
+@PreAuthorize("hasRole('ADMIN')")
 public class RefreshTokenController {
 
     private final RefreshTokenService refreshTokenService;

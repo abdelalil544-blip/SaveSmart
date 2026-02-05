@@ -42,6 +42,8 @@ public class SecurityConfig {
                                 "/api/auth/refresh",
                                 "/api/auth/logout"
                         ).permitAll()
+                        .requestMatchers("/api/users/**").hasRole("ADMIN")
+                        .requestMatchers("/api/refresh-tokens/**").hasRole("ADMIN")
                         .requestMatchers("/error").permitAll()
                         .anyRequest().authenticated()
                 )
