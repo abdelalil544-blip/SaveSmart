@@ -1,0 +1,45 @@
+<section class="grid gap-6 lg:grid-cols-[1.2fr_0.8fr] lg:items-center">
+  <div>
+    <p class="text-xs uppercase tracking-[0.2em] text-[#5f5d6b]">Saving goals</p>
+    <h1 class="mt-2 font-['Playfair_Display'] text-3xl text-[#1d1c26] sm:text-4xl">
+      Build momentum with every deposit
+    </h1>
+    <p class="mt-3 text-base text-[#5f5d6b]">Stay consistent and see every goal move forward.</p>
+  </div>
+  <div class="rounded-3xl border border-white/70 bg-white/80 p-6 shadow-[0_12px_24px_rgba(25,28,41,0.08)]">
+    <p class="text-xs uppercase tracking-[0.18em] text-[#5f5d6b]">Total saved</p>
+    <h2 class="mt-2 font-['Playfair_Display'] text-3xl text-[#1d1c26]">3,820</h2>
+    <p class="mt-1 text-sm text-[#5f5d6b]">Across 3 goals</p>
+  </div>
+</section>
+
+<section class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+  <article
+    class="grid gap-3 rounded-2xl border border-white/70 bg-white/85 p-5 shadow-[0_12px_24px_rgba(25,28,41,0.08)]"
+    *ngFor="let goal of goals"
+  >
+    <div class="flex items-start justify-between gap-3">
+      <h3 class="font-['Playfair_Display'] text-lg text-[#1d1c26]">{{ goal.title }}</h3>
+      <span class="rounded-full bg-[#0c0e1e]/10 px-3 py-1 text-xs font-semibold text-[#1d1c26]">
+        {{ goal.status }}
+      </span>
+    </div>
+    <p class="text-sm text-[#5f5d6b]">Due {{ goal.due }}</p>
+    <div class="flex items-center justify-between text-sm">
+      <div>
+        <span class="block text-xs text-[#5f5d6b]">Saved</span>
+        <strong class="text-[#1d1c26]">{{ goal.saved }}</strong>
+      </div>
+      <div>
+        <span class="block text-xs text-[#5f5d6b]">Target</span>
+        <strong class="text-[#1d1c26]">{{ goal.target }}</strong>
+      </div>
+    </div>
+    <div class="h-2.5 rounded-full bg-[#0c0e1e]/10">
+      <span
+        class="block h-full rounded-full bg-gradient-to-r from-[#ffae58] to-[#ffd3a3]"
+        [style.width.%]="getPercent(goal)"
+      ></span>
+    </div>
+  </article>
+</section>
