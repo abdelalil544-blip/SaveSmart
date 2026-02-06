@@ -18,7 +18,9 @@ export class RegisterPage {
   successMessage = signal<string | null>(null);
   isLoading = signal(false);
 
-  registerForm = this.fb.group({
+  private fb = new FormBuilder();
+
+  registerForm = this.fb.nonNullable.group({
     firstName: ['', [Validators.required, Validators.maxLength(100)]],
     lastName: ['', [Validators.required, Validators.maxLength(100)]],
     email: ['', [Validators.required, Validators.email]],
@@ -27,7 +29,6 @@ export class RegisterPage {
   });
 
   constructor(
-    private fb: FormBuilder,
     private authService: AuthService,
     private tokenService: TokenService,
     private router: Router
