@@ -10,8 +10,7 @@ import { TokenService } from '../../../core/token.service';
   selector: 'app-login-page',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterModule],
-  templateUrl: './login.page.html',
-  styleUrl: './login.page.css'
+  templateUrl: './login.page.html'
 })
 export class LoginPage {
   errorMessage = signal<string | null>(null);
@@ -46,7 +45,7 @@ export class LoginPage {
         this.tokenService.setTokens(response.accessToken, response.refreshToken, response.user?.id);
         this.successMessage.set('Connexion reussie.');
         this.isLoading.set(false);
-        this.router.navigateByUrl('/');
+        this.router.navigateByUrl('/app/dashboard');
       },
       error: (error) => {
         this.isLoading.set(false);

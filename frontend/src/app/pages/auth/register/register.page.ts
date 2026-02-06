@@ -10,8 +10,7 @@ import { TokenService } from '../../../core/token.service';
   selector: 'app-register-page',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterModule],
-  templateUrl: './register.page.html',
-  styleUrl: './register.page.css'
+  templateUrl: './register.page.html'
 })
 export class RegisterPage {
   errorMessage = signal<string | null>(null);
@@ -45,16 +44,16 @@ export class RegisterPage {
 
     const payload = this.registerForm.getRawValue();
     this.authService.register(payload).subscribe({
-      next: (response) => {
-        this.tokenService.setTokens(response.accessToken, response.refreshToken, response.user?.id);
-        this.successMessage.set('Compte cree avec succes.');
-        this.isLoading.set(false);
-        this.router.navigateByUrl('/');
-      },
-      error: (error) => {
-        this.isLoading.set(false);
-        this.errorMessage.set(error?.error?.message ?? 'Inscription impossible.');
-      }
+          next: (response) => {
+            this.tokenService.setTokens(response.accessToken, response.refreshToken, response.user?.id);
+            this.successMessage.set('Compte cree avec succes.');
+            this.isLoading.set(false);
+            this.router.navigateByUrl('/');
+          },
+          error: (error) => {
+            this.isLoading.set(false);
+            this.errorMessage.set(error?.error?.message ?? 'Inscription impossible.');
+          }
     });
   }
 }

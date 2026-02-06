@@ -19,12 +19,14 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Service
+@Transactional
 public class AuthServiceImpl implements AuthService {
 
     private final UserRepository userRepository;
@@ -84,6 +86,7 @@ public class AuthServiceImpl implements AuthService {
 
         String accessToken = jwtService.generateToken(user);
         refreshTokenRepository.deleteByUserId(user.getId());
+        refreshTokenRepository.flush();
         String refreshToken = createRefreshToken(user);
 
         AuthResponseDTO response = new AuthResponseDTO();
@@ -99,12 +102,14 @@ public class AuthServiceImpl implements AuthService {
                 .orElseThrow(() -> new UnauthorizedException("Invalid refresh token"));
         if (token.getExpiryDate().isBefore(LocalDateTime.now())) {
             refreshTokenRepository.deleteById(token.getId());
+            refreshTokenRepository.flush();
             throw new TokenExpiredException("Refresh token expired");
         }
 
         User user = token.getUser();
         String accessToken = jwtService.generateToken(user);
         refreshTokenRepository.deleteById(token.getId());
+        refreshTokenRepository.flush();
         String newRefreshToken = createRefreshToken(user);
 
         AuthResponseDTO response = new AuthResponseDTO();
