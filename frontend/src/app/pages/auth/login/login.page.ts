@@ -18,13 +18,14 @@ export class LoginPage {
   successMessage = signal<string | null>(null);
   isLoading = signal(false);
 
-  loginForm = this.fb.group({
+  private fb = new FormBuilder();
+
+  loginForm = this.fb.nonNullable.group({
     email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required, Validators.minLength(8)]]
   });
 
   constructor(
-    private fb: FormBuilder,
     private authService: AuthService,
     private tokenService: TokenService,
     private router: Router
