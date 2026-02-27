@@ -9,44 +9,61 @@
   </div>
 
   <div class="glass-card hover-lift rounded-[2.5rem] p-8 text-center sm:text-left transition-all hover:bg-white">
-    <p class="text-[0.65rem] font-bold uppercase tracking-[0.2em] text-[#5f5d6b]">Rolling Net Flow</p>
-    <h2 class="mt-3 font-['Playfair_Display'] text-4xl font-bold text-emerald-600">+€2,800</h2>
+    <p class="text-[0.65rem] font-bold uppercase tracking-[0.2em] text-[#5f5d6b]">Total Records</p>
+    <h2 class="mt-3 font-['Playfair_Display'] text-4xl font-bold text-[#1d1c26]">{{ totalElements() }}</h2>
     <div class="mt-3 flex items-center justify-center gap-2 sm:justify-start">
-      <span class="text-xs font-bold text-[#5f5d6b]">Velocity: High Impact · Last 30 days</span>
+      <span class="text-xs font-bold text-[#5f5d6b]">Page {{ currentPage() + 1 }} of {{ totalPages() || 1 }}</span>
     </div>
   </div>
 </section>
 
-<section class="relative mt-8 grid gap-8">
+@if (errorMessage()) {
+<div
+  class="mt-8 animate-in fade-in slide-in-from-top-2 rounded-2xl border border-rose-500/10 bg-rose-500/5 px-6 py-4 text-sm font-medium text-rose-700">
+  {{ errorMessage() }}
+</div>
+}
+
+<section class="relative mt-8 grid gap-8 pb-12">
   <div
-    class="absolute left-4 top-4 hidden h-[calc(100%-2rem)] w-[1px] bg-gradient-to-b from-[#1d1c26]/20 via-[#1d1c26]/10 to-transparent sm:block">
+    class="absolute left-4 top-4 hidden h-[calc(100%-4rem)] w-[1px] bg-gradient-to-b from-[#1d1c26]/20 via-[#1d1c26]/10 to-transparent sm:block">
   </div>
 
-  @for (entry of entries; track $index) {
+  @if (isLoading()) {
+  <div class="flex flex-col items-center justify-center py-20 gap-4">
+    <div class="h-10 w-10 animate-spin rounded-full border-2 border-[#ffae58] border-t-transparent"></div>
+    <p class="text-xs font-bold uppercase tracking-widest text-[#5f5d6b]/60">Retrieving ledger details...</p>
+  </div>
+  } @else if (!entries().length) {
+  <div class="glass-card rounded-[2rem] border border-dashed border-[#1d1c26]/10 py-20 text-center">
+    <p class="text-sm font-medium text-[#5f5d6b]">Your financial timeline is empty.</p>
+    <p class="mt-2 text-xs text-[#5f5d6b]/60">Add some incomes or expenses to see them here.</p>
+  </div>
+  } @else {
+  @for (entry of entries(); track entry.id) {
   <article class="relative grid gap-6 sm:grid-cols-[32px_1fr]">
     <div class="relative z-10 mt-6 hidden sm:block">
-      <div class="h-4 w-4 rounded-full ring-4 shadow-xl transition-all duration-300 group-hover:scale-125" [ngClass]="entry.type === 'income'
-            ? 'bg-emerald-400 ring-emerald-400/20 shadow-emerald-400/40'
-            : 'bg-[#ffae58] ring-[#ffae58]/20 shadow-[#ffae58]/40'"></div>
+      <div class="h-4 w-4 rounded-full ring-4 shadow-xl transition-all duration-300 group-hover:scale-125"
+        [style.background]="entry.type === 'INCOME' ? '#10b981' : (entry.categoryColor || '#ffae58')"
+        [style.ringColor]="entry.type === 'INCOME' ? 'rgba(16,185,129,0.2)' : 'rgba(255,174,88,0.2)'"></div>
     </div>
 
-    <div class="glass-card hover-lift group rounded-[2rem] p-6 transition-all hover:bg-white">
+    <div class="glass-card hover-lift group rounded-[2rem] p-6 transition-all hover:bg-white text-[#1d1c26]">
       <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div class="space-y-1">
-          <h3
-            class="font-['Playfair_Display'] text-xl font-bold text-[#1d1c26] group-hover:text-[#ffae58] transition-colors">
-            {{ entry.title }}</h3>
+          <h3 class="font-['Playfair_Display'] text-xl font-bold transition-colors group-hover:text-[#ffae58]">{{
+            entry.description || entry.categoryName }}</h3>
           <div class="flex items-center gap-2 text-xs font-bold text-[#5f5d6b]/60">
-            <span class="uppercase tracking-widest">{{ entry.category }}</span>
+            <span class="uppercase tracking-widest">{{ entry.categoryName }}</span>
             <span class="h-1 w-1 rounded-full bg-[#1d1c26]/20"></span>
-            <span>{{ entry.date }}</span>
+            <span>{{ formatDate(entry.date) }}</span>
           </div>
         </div>
 
         <div class="text-right">
           <div class="text-2xl font-bold tracking-tight"
-            [ngClass]="entry.type === 'income' ? 'text-emerald-600' : 'text-[#1d1c26]'">
-            {{ entry.type === 'income' ? '+' : '-' }}€{{ entry.amount }}
+            [ngClass]="entry.type === 'INCOME' ? 'text-emerald-600' : 'text-[#1d1c26]'">
+            {{ entry.type === 'INCOME' ? '+' : '-' }}€{{ entry.amount }}
           </div>
         </div>
       </div>
@@ -58,10 +75,34 @@
         </span>
         <span
           class="rounded-lg bg-[#1d1c26]/5 px-3 py-1 text-[0.6rem] font-bold uppercase tracking-widest text-[#1d1c26]/40">
-          System Logged
+          Verified
         </span>
       </div>
     </div>
   </article>
+  }
+
+  <!-- Pagination Controls -->
+  <div class="mt-8 flex items-center justify-between border-t border-[#1d1c26]/5 pt-8">
+    <button (click)="previousPage()" [disabled]="currentPage() === 0"
+      class="hover-lift flex items-center gap-2 rounded-xl border border-[#1d1c26]/10 px-6 py-2.5 text-xs font-bold uppercase tracking-widest text-[#1d1c26] transition-all hover:bg-[#1d1c26] hover:text-white disabled:opacity-20 disabled:hover:bg-transparent disabled:hover:text-[#1d1c26]">
+      ← Previous
+    </button>
+
+    <div class="flex items-center gap-1">
+      @for (p of [].constructor(totalPages()); track $index) {
+      <button (click)="loadTransactions($index)" class="h-8 w-8 rounded-lg text-[0.65rem] font-bold transition-all"
+        [class.bg-[#1d1c26]]="currentPage() === $index" [class.text-white]="currentPage() === $index"
+        [class.text-[#5f5d6b]]="currentPage() !== $index" [class.hover:bg-[#1d1c26]/5]="currentPage() !== $index">
+        {{ $index + 1 }}
+      </button>
+      }
+    </div>
+
+    <button (click)="nextPage()" [disabled]="currentPage() >= totalPages() - 1"
+      class="hover-lift flex items-center gap-2 rounded-xl border border-[#1d1c26]/10 px-6 py-2.5 text-xs font-bold uppercase tracking-widest text-[#1d1c26] transition-all hover:bg-[#1d1c26] hover:text-white disabled:opacity-20 disabled:hover:bg-transparent disabled:hover:text-[#1d1c26]">
+      Next →
+    </button>
+  </div>
   }
 </section>

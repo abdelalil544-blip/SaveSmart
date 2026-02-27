@@ -29,6 +29,10 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/timeline/timeline.page').then((m) => m.TimelinePage)
       },
       {
+        path: 'categories',
+        loadComponent: () => import('./pages/categories/categories.page').then((m) => m.CategoriesPage)
+      },
+      {
         path: '',
         redirectTo: 'dashboard',
         pathMatch: 'full'
