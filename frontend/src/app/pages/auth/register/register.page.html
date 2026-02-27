@@ -1,108 +1,91 @@
-<div class="min-h-screen bg-slate-950 text-slate-100">
-  <div class="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(14,165,233,0.2),_transparent_40%)]">
-    <div class="mx-auto flex min-h-screen max-w-6xl items-center justify-center px-6 py-16">
-      <div class="w-full max-w-md rounded-3xl border border-slate-800 bg-slate-900/70 p-8 shadow-2xl shadow-slate-950/50 backdrop-blur">
-        <div class="space-y-3">
-          <p class="text-xs uppercase tracking-[0.2em] text-slate-400">SaveSmart</p>
-          <h1 class="text-3xl font-semibold tracking-tight">Inscription</h1>
-          <p class="text-sm text-slate-400">
-            Cree ton compte pour commencer a organiser ton budget.
-          </p>
+<div class="min-h-screen flex items-center justify-center p-6">
+  <div class="w-full max-w-xl">
+    <div class="mb-8 text-center">
+      <div
+        class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-[#ffae58] text-lg font-bold tracking-widest text-[#1d1c26] shadow-xl shadow-[#ffae58]/20">
+        SS
+      </div>
+      <h1 class="mt-6 font-['Playfair_Display'] text-3xl font-bold tracking-tight text-[#1d1c26]">Create your Account
+      </h1>
+      <p class="mt-2 text-sm text-[#5f5d6b]">Join thousands of users managing their wealth smarter.</p>
+    </div>
+
+    <div class="glass-card premium-shadow rounded-[2.5rem] p-8 backdrop-blur-3xl">
+      <div class="space-y-2">
+        <h2 class="text-xl font-bold text-[#1d1c26]">Registration</h2>
+        <p class="text-xs text-[#5f5d6b]">Please fill in your details to get started.</p>
+      </div>
+
+      @if (errorMessage()) {
+      <div
+        class="mt-6 flex items-center gap-3 rounded-2xl border border-rose-500/20 bg-rose-500/5 px-4 py-3 text-sm text-rose-700">
+        <span>⚠️</span> {{ errorMessage() }}
+      </div>
+      }
+
+      @if (successMessage()) {
+      <div
+        class="mt-6 flex items-center gap-3 rounded-2xl border border-emerald-500/20 bg-emerald-500/5 px-4 py-3 text-sm text-emerald-700">
+        <span>✅</span> {{ successMessage() }}
+      </div>
+      }
+
+      <form class="mt-8 space-y-4" [formGroup]="registerForm" (ngSubmit)="submitRegister()">
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div class="space-y-1.5">
+            <label class="text-[0.6rem] font-bold uppercase tracking-widest text-[#5f5d6b] ml-1">First Name</label>
+            <input type="text" formControlName="firstName" class="glass-input w-full !py-2.5" placeholder="John" />
+            @if (registerForm.controls.firstName.touched && registerForm.controls.firstName.invalid) {
+            <span class="text-[0.6rem] font-bold text-rose-500 ml-1">Required.</span>
+            }
+          </div>
+          <div class="space-y-1.5">
+            <label class="text-[0.6rem] font-bold uppercase tracking-widest text-[#5f5d6b] ml-1">Last Name</label>
+            <input type="text" formControlName="lastName" class="glass-input w-full !py-2.5" placeholder="Doe" />
+            @if (registerForm.controls.lastName.touched && registerForm.controls.lastName.invalid) {
+            <span class="text-[0.6rem] font-bold text-rose-500 ml-1">Required.</span>
+            }
+          </div>
         </div>
 
-        @if (errorMessage()) {
-          <div class="mt-4 rounded-2xl border border-rose-500/40 bg-rose-500/10 px-4 py-3 text-sm text-rose-200">
-            {{ errorMessage() }}
-          </div>
-        }
+        <div class="space-y-1.5">
+          <label class="text-[0.6rem] font-bold uppercase tracking-widest text-[#5f5d6b] ml-1">Email Address</label>
+          <input type="email" formControlName="email" class="glass-input w-full !py-2.5" placeholder="john@doe.com" />
+          @if (registerForm.controls.email.touched && registerForm.controls.email.invalid) {
+          <span class="text-[0.6rem] font-bold text-rose-500 ml-1">Required.</span>
+          }
+        </div>
 
-        @if (successMessage()) {
-          <div class="mt-4 rounded-2xl border border-emerald-500/40 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-200">
-            {{ successMessage() }}
-          </div>
-        }
+        <div class="space-y-1.5">
+          <label class="text-[0.6rem] font-bold uppercase tracking-widest text-[#5f5d6b] ml-1">Password</label>
+          <input type="password" formControlName="password" class="glass-input w-full !py-2.5"
+            placeholder="Min. 8 characters" />
+          @if (registerForm.controls.password.touched && registerForm.controls.password.invalid) {
+          <span class="text-[0.6rem] font-bold text-rose-500 ml-1">Required.</span>
+          }
+        </div>
 
-        <form class="mt-6 space-y-4" [formGroup]="registerForm" (ngSubmit)="submitRegister()">
-          <div class="grid gap-4 md:grid-cols-2">
-            <label class="block space-y-2 text-sm">
-              <span class="text-slate-300">Prenom</span>
-              <input
-                type="text"
-                formControlName="firstName"
-                class="w-full rounded-2xl border border-slate-800 bg-slate-950/50 px-4 py-3 text-sm text-slate-100 outline-none transition focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20"
-                placeholder="Ton prenom"
-              />
-              @if (registerForm.controls.firstName.touched && registerForm.controls.firstName.invalid) {
-                <span class="text-xs text-rose-300">Prenom requis.</span>
-              }
-            </label>
+        <div class="space-y-1.5">
+          <label class="text-[0.6rem] font-bold uppercase tracking-widest text-[#5f5d6b] ml-1">Phone Number
+            (Optional)</label>
+          <input type="text" formControlName="phoneNumber" class="glass-input w-full !py-2.5" placeholder="+33 6 ..." />
+        </div>
 
-            <label class="block space-y-2 text-sm">
-              <span class="text-slate-300">Nom</span>
-              <input
-                type="text"
-                formControlName="lastName"
-                class="w-full rounded-2xl border border-slate-800 bg-slate-950/50 px-4 py-3 text-sm text-slate-100 outline-none transition focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20"
-                placeholder="Ton nom"
-              />
-              @if (registerForm.controls.lastName.touched && registerForm.controls.lastName.invalid) {
-                <span class="text-xs text-rose-300">Nom requis.</span>
-              }
-            </label>
-          </div>
+        <button type="submit"
+          class="hover-lift w-full mt-4 rounded-2xl bg-[#1d1c26] py-3.5 text-sm font-bold text-white shadow-xl shadow-[#1d1c26]/20 transition-all hover:brightness-110 disabled:opacity-50"
+          [disabled]="isLoading()">
+          @if (isLoading()) {
+          Creating account...
+          } @else {
+          Join SaveSmart
+          }
+        </button>
+      </form>
 
-          <label class="block space-y-2 text-sm">
-            <span class="text-slate-300">Email</span>
-            <input
-              type="email"
-              formControlName="email"
-              class="w-full rounded-2xl border border-slate-800 bg-slate-950/50 px-4 py-3 text-sm text-slate-100 outline-none transition focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20"
-              placeholder="ex: nom@mail.com"
-            />
-            @if (registerForm.controls.email.touched && registerForm.controls.email.invalid) {
-              <span class="text-xs text-rose-300">Email requis.</span>
-            }
-          </label>
-
-          <label class="block space-y-2 text-sm">
-            <span class="text-slate-300">Mot de passe</span>
-            <input
-              type="password"
-              formControlName="password"
-              class="w-full rounded-2xl border border-slate-800 bg-slate-950/50 px-4 py-3 text-sm text-slate-100 outline-none transition focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20"
-              placeholder="8 caracteres minimum"
-            />
-            @if (registerForm.controls.password.touched && registerForm.controls.password.invalid) {
-              <span class="text-xs text-rose-300">Mot de passe requis.</span>
-            }
-          </label>
-
-          <label class="block space-y-2 text-sm">
-            <span class="text-slate-300">Telephone (optionnel)</span>
-            <input
-              type="tel"
-              formControlName="phoneNumber"
-              class="w-full rounded-2xl border border-slate-800 bg-slate-950/50 px-4 py-3 text-sm text-slate-100 outline-none transition focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20"
-              placeholder="Ex: 06 12 34 56 78"
-            />
-          </label>
-
-          <button
-            type="submit"
-            class="w-full rounded-2xl bg-cyan-500 px-4 py-3 text-sm font-semibold text-slate-950 transition hover:bg-cyan-400 disabled:cursor-not-allowed disabled:opacity-70"
-            [disabled]="isLoading()"
-          >
-            @if (isLoading()) {
-              Chargement...
-            } @else {
-              Creer un compte
-            }
-          </button>
-        </form>
-
-        <p class="mt-6 text-center text-sm text-slate-400">
-          Deja un compte ?
-          <a class="text-cyan-300 hover:text-cyan-200" routerLink="/login">Se connecter</a>
+      <div class="mt-8 pt-6 border-t border-[#1d1c26]/5 text-center">
+        <p class="text-sm font-medium text-[#5f5d6b]">
+          Already have an account?
+          <a class="font-bold text-[#ffae58] hover:underline" routerLink="/login">Sign In</a>
         </p>
       </div>
     </div>

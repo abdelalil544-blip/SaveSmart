@@ -1,65 +1,186 @@
-<section class="grid gap-6 lg:grid-cols-[1.2fr_0.8fr] lg:items-center">
-  <div>
-    <p class="text-xs uppercase tracking-[0.2em] text-[#5f5d6b]">Monthly overview</p>
-    <h1 class="mt-2 font-['Playfair_Display'] text-3xl text-[#1d1c26] sm:text-4xl">
-      Stay ahead of your money, not behind it.
-    </h1>
-    <p class="mt-3 text-base leading-relaxed text-[#5f5d6b]">
-      Track income, expenses, and budgets with a single glance. This is a static preview of what your
-      personalized data can look like.
-    </p>
+<section class="grid gap-8 lg:grid-cols-[1.4fr_0.6fr] lg:items-center">
+  <div class="space-y-6">
+    <div>
+      <p class="text-xs font-bold uppercase tracking-[0.3em] text-[#5f5d6b]">Intelligence Panel</p>
+      <h1 class="mt-3 font-['Playfair_Display'] text-4xl font-bold tracking-tight text-[#1d1c26] sm:text-5xl">
+        Your wealth, <span class="text-[#ffae58]">evolved.</span>
+      </h1>
+      <p class="mt-4 max-w-xl text-lg leading-relaxed text-[#5f5d6b]">
+        SaveSmart tracks your financial pulse in real-time. Optimize your spending and reach your goals faster.
+      </p>
+    </div>
+
+    <div class="flex flex-wrap items-center gap-4">
+      <div class="space-y-1.5">
+        <span class="text-[0.65rem] font-bold uppercase tracking-widest text-[#5f5d6b]">Period</span>
+        <div class="flex gap-2">
+          <select class="glass-input !py-2 !pr-8" [(ngModel)]="selectedMonth" (change)="onPeriodChange()">
+            <option *ngFor="let month of months" [ngValue]="month.value">{{ month.label }}</option>
+          </select>
+          <select class="glass-input !py-2 !pr-8" [(ngModel)]="selectedYear" (change)="onPeriodChange()">
+            <option *ngFor="let year of years" [ngValue]="year">{{ year }}</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    @if (errorMessage()) {
+    <div
+      class="flex items-center gap-3 rounded-2xl border border-rose-500/20 bg-rose-500/5 px-4 py-3 text-sm text-rose-700">
+      <span class="text-xl">⚠️</span>
+      {{ errorMessage() }}
+    </div>
+    }
   </div>
-  <div class="rounded-3xl border border-white/80 bg-white/70 p-6 shadow-[0_12px_24px_rgba(25,28,41,0.08)]">
-    <h3 class="font-['Playfair_Display'] text-lg">Cashflow pulse</h3>
-    <p class="mt-2 text-4xl font-semibold text-[#1d1c26]">+6,070</p>
-    <p class="text-sm text-[#5f5d6b]">Net balance for September</p>
-    <div class="mt-5 grid h-16 grid-cols-4 items-end gap-2">
-      <div class="h-[68%] rounded-[12px_12px_6px_6px] bg-gradient-to-b from-[#ffae58] to-[#ffd3a3]"></div>
-      <div class="h-[52%] rounded-[12px_12px_6px_6px] bg-gradient-to-b from-[#ffae58] to-[#ffd3a3]"></div>
-      <div class="h-[82%] rounded-[12px_12px_6px_6px] bg-gradient-to-b from-[#ffae58] to-[#ffd3a3]"></div>
-      <div class="h-[44%] rounded-[12px_12px_6px_6px] bg-gradient-to-b from-[#ffae58] to-[#ffd3a3]"></div>
+
+  <div class="glass-card hover-lift overflow-hidden rounded-3xl p-8">
+    <div class="flex items-center justify-between">
+      <h3 class="font-['Playfair_Display'] text-xl font-bold">Cashflow Pulse</h3>
+      <span class="rounded-full bg-emerald-500/10 px-3 py-1 text-xs font-bold text-emerald-600">Active</span>
+    </div>
+    <div class="mt-6">
+      <div class="text-4xl font-bold tracking-tight text-[#1d1c26]">{{ stats[2]?.value ?? '0' }}</div>
+      <p class="mt-1 text-sm font-medium text-[#5f5d6b]">Net balance this month</p>
+    </div>
+    <div class="mt-8 flex h-24 items-end gap-3">
+      @for (bar of bars; track $index) {
+      <div class="group relative flex-1">
+        <div
+          class="w-full rounded-2xl bg-gradient-to-t from-[#ffae58] to-[#ffd3a3] transition-all duration-500 group-hover:brightness-110"
+          [style.height.%]="bar"></div>
+        <div class="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[0.65rem] font-bold text-[#5f5d6b]">W{{$index +
+          1}}</div>
+      </div>
+      }
     </div>
   </div>
 </section>
 
-<section class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-  <article
-    class="rounded-2xl border border-white/70 bg-white/75 p-5 shadow-[0_12px_24px_rgba(25,28,41,0.08)]"
-    *ngFor="let stat of stats"
-  >
-    <p class="text-sm text-[#5f5d6b]">{{ stat.label }}</p>
-    <h2 class="mt-2 font-['Playfair_Display'] text-2xl text-[#1d1c26]">{{ stat.value }}</h2>
-    <p class="mt-1 text-xs text-[#5f5d6b]">{{ stat.delta }}</p>
-  </article>
+<section class="mt-8">
+  <div class="glass-card premium-shadow rounded-[2.5rem] p-8">
+    <div class="flex flex-col gap-8 lg:flex-row lg:items-center">
+      <div class="space-y-2 lg:w-1/3">
+        <h3 class="font-['Playfair_Display'] text-2xl font-bold text-[#1d1c26]">Quick Entry</h3>
+        <p class="text-sm text-[#5f5d6b]">Log your last transaction in seconds.</p>
+
+        @if (successMessage()) {
+        <div
+          class="mt-4 animate-in fade-in slide-in-from-top-2 rounded-2xl border border-emerald-500/10 bg-emerald-500/5 px-4 py-2 text-xs font-bold text-emerald-700">
+          {{ successMessage() }}
+        </div>
+        }
+      </div>
+
+      <form class="grid flex-1 gap-4 sm:grid-cols-2 lg:grid-cols-4" (ngSubmit)="submitTransaction()">
+        <div class="space-y-1.5">
+          <label class="ml-1 text-[0.6rem] font-bold uppercase tracking-widest text-[#5f5d6b]">Type</label>
+          <select class="glass-input w-full !py-2.5" [(ngModel)]="transactionForm.type" name="type">
+            <option value="EXPENSE">Expense</option>
+            <option value="INCOME">Income</option>
+          </select>
+        </div>
+
+        <div class="space-y-1.5">
+          <label class="ml-1 text-[0.6rem] font-bold uppercase tracking-widest text-[#5f5d6b]">Amount</label>
+          <input type="number" class="glass-input w-full !py-2.5" placeholder="0.00" name="amount"
+            [(ngModel)]="transactionForm.amount" />
+        </div>
+
+        <div class="space-y-1.5">
+          <label class="ml-1 text-[0.6rem] font-bold uppercase tracking-widest text-[#5f5d6b]">Category</label>
+          <select class="glass-input w-full !py-2.5" [(ngModel)]="transactionForm.categoryId" name="categoryId">
+            <option value="">Select...</option>
+            <option *ngFor="let cat of filteredCategories()" [value]="cat.id">{{ cat.name }}</option>
+          </select>
+        </div>
+
+        <div class="flex items-end">
+          <button type="submit" [disabled]="isSaving()"
+            class="hover-lift w-full rounded-2xl bg-[#1d1c26] py-3 text-sm font-bold text-white shadow-xl shadow-[#1d1c26]/20 transition-all hover:brightness-110 disabled:opacity-50">
+            {{ isSaving() ? 'Saving...' : 'Log Transaction' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
 </section>
 
-<section class="grid gap-4 lg:grid-cols-2">
-  <article class="rounded-3xl border border-white/70 bg-white/80 p-6 shadow-[0_12px_24px_rgba(25,28,41,0.08)]">
-    <h3 class="font-['Playfair_Display'] text-lg">Category spend</h3>
-    <div class="mt-4 space-y-4">
-      <div *ngFor="let item of categories">
-        <div class="flex items-center justify-between text-sm text-[#1d1c26]">
-          <span>{{ item.name }}</span>
-          <span>{{ item.spent }} / {{ item.limit }}</span>
-        </div>
-        <div class="mt-2 h-2.5 rounded-full bg-[#0c0e1e]/10">
-          <span
-            class="block h-full rounded-full"
-            [style.width.%]="getPercent(item)"
-            [style.background]="item.color"
-          ></span>
-        </div>
-      </div>
+<section class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+  @for (stat of stats; track stat.label) {
+  <article class="glass-card hover-lift group rounded-2xl p-6 transition-all hover:bg-white">
+    <div class="flex items-center justify-between">
+      <p class="text-[0.7rem] font-bold uppercase tracking-widest text-[#5f5d6b]">{{ stat.label }}</p>
+      <span class="text-lg opacity-40 group-hover:opacity-100 transition-opacity">📊</span>
+    </div>
+    <h2 class="mt-4 font-['Playfair_Display'] text-2xl font-bold text-[#1d1c26]">{{ stat.value }}</h2>
+    <div class="mt-2 flex items-center gap-2">
+      <span class="text-[0.65rem] font-bold text-[#5f5d6b]">{{ stat.delta }}</span>
     </div>
   </article>
+  }
+</section>
 
-  <article class="rounded-3xl border border-white/70 bg-white/80 p-6 shadow-[0_12px_24px_rgba(25,28,41,0.08)]">
-    <h3 class="font-['Playfair_Display'] text-lg">Highlights</h3>
-    <div class="mt-4 space-y-4">
-      <div *ngFor="let highlight of highlights">
-        <p class="text-sm font-semibold text-[#1d1c26]">{{ highlight.title }}</p>
-        <p class="text-sm text-[#5f5d6b]">{{ highlight.detail }}</p>
-      </div>
+<section class="grid gap-6 lg:grid-cols-2">
+  <article class="glass-card rounded-3xl p-8">
+    <div class="flex items-center justify-between">
+      <h3 class="font-['Playfair_Display'] text-xl font-bold">Category Distribution</h3>
+      <button class="text-xs font-bold text-[#ffae58] hover:underline">View All</button>
     </div>
+
+    @if (isLoading()) {
+    <div class="mt-10 flex flex-col items-center gap-4 py-8">
+      <div class="h-8 w-8 animate-spin rounded-full border-2 border-[#ffae58] border-t-transparent"></div>
+      <p class="text-sm font-medium text-[#5f5d6b]">Analyzing transactions...</p>
+    </div>
+    } @else if (!categories.length) {
+    <div class="mt-10 rounded-2xl border border-dashed border-[#1d1c26]/10 py-12 text-center">
+      <p class="text-sm font-medium text-[#5f5d6b]">No data found for this period.</p>
+    </div>
+    } @else {
+    <div class="mt-8 space-y-6">
+      @for (item of categories; track item.name) {
+      <div class="group">
+        <div class="flex items-center justify-between text-sm">
+          <span class="font-bold text-[#1d1c26]">{{ item.name }}</span>
+          <span class="font-medium text-[#5f5d6b]">
+            {{ item.spentLabel }} <span class="mx-1 text-xs opacity-40">/</span> {{ item.limitLabel }}
+          </span>
+        </div>
+        <div class="mt-3 h-3 overflow-hidden rounded-full bg-[#1d1c26]/5">
+          <div class="h-full rounded-full transition-all duration-1000" [style.width.%]="getPercent(item)"
+            [style.background]="item.color"></div>
+        </div>
+      </div>
+      }
+    </div>
+    }
+  </article>
+
+  <article class="glass-card rounded-3xl p-8">
+    <div class="flex items-center justify-between">
+      <h3 class="font-['Playfair_Display'] text-xl font-bold">Strategic Highlights</h3>
+      <span class="h-2 w-2 animate-pulse rounded-full bg-[#ffae58]"></span>
+    </div>
+
+    @if (isLoading()) {
+    <div class="mt-10 space-y-4">
+      <div class="h-16 animate-pulse rounded-2xl bg-[#1d1c26]/5"></div>
+      <div class="h-16 animate-pulse rounded-2xl bg-[#1d1c26]/5"></div>
+    </div>
+    } @else {
+    <div class="mt-8 space-y-4">
+      @for (highlight of highlights; track highlight.title) {
+      <div class="flex items-start gap-4 rounded-2xl bg-white/40 p-5 transition-all hover:bg-white/80">
+        <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#1d1c26]/5 text-xl">
+          💡
+        </div>
+        <div>
+          <p class="text-sm font-bold text-[#1d1c26]">{{ highlight.title }}</p>
+          <p class="mt-1 text-sm leading-relaxed text-[#5f5d6b]">{{ highlight.detail }}</p>
+        </div>
+      </div>
+      }
+    </div>
+    }
   </article>
 </section>
