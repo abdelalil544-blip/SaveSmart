@@ -1,47 +1,59 @@
 <div class="min-h-screen px-4 pb-10 pt-7 sm:px-8 lg:px-12">
-  <header class="mb-8 flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
-    <div class="flex items-center gap-3">
-      <span
-        class="grid h-12 w-12 place-items-center rounded-2xl bg-[#ffae58] text-sm font-semibold tracking-[0.2em] text-[#1d1c26] shadow-[0_12px_24px_rgba(33,30,44,0.15)]"
+  <header class="mb-10 flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
+    <div class="flex items-center gap-4">
+      <div
+        class="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#ffae58] text-sm font-bold tracking-widest text-[#1d1c26] shadow-lg shadow-[#ffae58]/20"
       >
         SS
-      </span>
+      </div>
       <div>
-        <div class="text-lg font-semibold text-[#1d1c26]">SaveSmart</div>
-        <div class="text-sm text-[#5f5d6b]">Finance companion</div>
+        <h1 class="font-['Playfair_Display'] text-2xl font-bold leading-none text-[#1d1c26]">SaveSmart</h1>
+        <p class="text-xs uppercase tracking-[0.2em] text-[#5f5d6b]">Finance companion</p>
       </div>
     </div>
-    <nav class="flex flex-wrap items-center gap-3">
+
+    <nav class="flex items-center gap-2 overflow-x-auto pb-2 lg:pb-0">
       <a
         routerLink="/app/dashboard"
-        routerLinkActive="bg-[#1d1c26] text-white border-[#1d1c26]"
-        class="rounded-full border border-white/60 bg-white/70 px-4 py-2 text-sm font-semibold text-[#5f5d6b] transition hover:-translate-y-0.5 hover:text-[#1d1c26]"
+        routerLinkActive="bg-[#1d1c26] text-white !border-[#1d1c26]"
+        class="hover-lift whitespace-nowrap rounded-2xl border border-white/60 bg-white/70 px-5 py-2.5 text-sm font-semibold text-[#5f5d6b] transition-all hover:bg-white hover:text-[#1d1c26]"
       >
         Dashboard
       </a>
       <a
         routerLink="/app/budgets"
-        routerLinkActive="bg-[#1d1c26] text-white border-[#1d1c26]"
-        class="rounded-full border border-white/60 bg-white/70 px-4 py-2 text-sm font-semibold text-[#5f5d6b] transition hover:-translate-y-0.5 hover:text-[#1d1c26]"
+        routerLinkActive="bg-[#1d1c26] text-white !border-[#1d1c26]"
+        class="hover-lift whitespace-nowrap rounded-2xl border border-white/60 bg-white/70 px-5 py-2.5 text-sm font-semibold text-[#5f5d6b] transition-all hover:bg-white hover:text-[#1d1c26]"
       >
         Budgets
       </a>
       <a
         routerLink="/app/goals"
-        routerLinkActive="bg-[#1d1c26] text-white border-[#1d1c26]"
-        class="rounded-full border border-white/60 bg-white/70 px-4 py-2 text-sm font-semibold text-[#5f5d6b] transition hover:-translate-y-0.5 hover:text-[#1d1c26]"
+        routerLinkActive="bg-[#1d1c26] text-white !border-[#1d1c26]"
+        class="hover-lift whitespace-nowrap rounded-2xl border border-white/60 bg-white/70 px-5 py-2.5 text-sm font-semibold text-[#5f5d6b] transition-all hover:bg-white hover:text-[#1d1c26]"
       >
         Goals
       </a>
       <a
         routerLink="/app/timeline"
-        routerLinkActive="bg-[#1d1c26] text-white border-[#1d1c26]"
-        class="rounded-full border border-white/60 bg-white/70 px-4 py-2 text-sm font-semibold text-[#5f5d6b] transition hover:-translate-y-0.5 hover:text-[#1d1c26]"
+        routerLinkActive="bg-[#1d1c26] text-white !border-[#1d1c26]"
+        class="hover-lift whitespace-nowrap rounded-2xl border border-white/60 bg-white/70 px-5 py-2.5 text-sm font-semibold text-[#5f5d6b] transition-all hover:bg-white hover:text-[#1d1c26]"
       >
         Timeline
       </a>
     </nav>
+
+    <div class="hidden items-center gap-4 lg:flex">
+      <div class="h-10 w-[1px] bg-[#1d1c26]/10"></div>
+      <button class="hover-lift flex h-10 w-10 items-center justify-center rounded-2xl glass-card transition-all hover:bg-white">
+        <span class="text-lg">🔔</span>
+      </button>
+      <div class="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#1d1c26] text-white">
+        <span class="text-xs font-bold">JD</span>
+      </div>
+    </div>
   </header>
+
 
   <main class="flex flex-col gap-6">
     <router-outlet />

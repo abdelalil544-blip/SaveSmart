@@ -1,3 +1,27 @@
-/* You can add global styles to this file, and also import other style files */
-
 @import "tailwindcss";
+
+@layer utilities {
+  .glass-card {
+    @apply border border-white/60 bg-white/70 backdrop-blur-xl shadow-[0_12px_24px_rgba(25,28,41,0.06)];
+  }
+
+  .glass-input {
+    @apply rounded-2xl border border-white/80 bg-white/80 px-4 py-3 text-sm font-medium text-[#1d1c26] shadow-[0_4px_12px_rgba(25,28,41,0.04)] outline-none transition-all focus:border-[#ffae58] focus:ring-4 focus:ring-[#ffae58]/10;
+  }
+
+  .premium-shadow {
+    @apply shadow-[0_20px_40px_rgba(25,28,41,0.08)];
+  }
+
+  .hover-lift {
+    @apply transition-transform duration-300 hover:-translate-y-1;
+  }
+}
+
+@layer base {
+  body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
