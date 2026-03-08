@@ -15,7 +15,7 @@ import {
 export class SavingGoalsService {
   private api = API_BASE_URL;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   getByUser(userId: string): Observable<SavingGoalResponse[]> {
     return this.http.get<SavingGoalResponse[]>(`${this.api}/api/saving-goals/by-user`, {

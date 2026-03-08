@@ -1,86 +1,71 @@
-<div class="min-h-screen flex items-center justify-center p-6">
-  <div class="w-full max-w-lg">
+<div class="min-h-screen bg-[#F9FAFB] flex flex-col items-center justify-center p-6">
+  <div class="w-full max-w-md">
+    <!-- Platform Identity -->
     <div class="mb-10 text-center">
       <div
-        class="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-[#ffae58] text-xl font-bold tracking-widest text-[#1d1c26] shadow-xl shadow-[#ffae58]/20">
-        SS
+        class="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-600 shadow-xl shadow-indigo-600/20">
+        <span class="font-['Outfit'] text-sm font-bold tracking-tighter text-white">SS</span>
       </div>
-      <h1 class="mt-6 font-['Playfair_Display'] text-4xl font-bold tracking-tight text-[#1d1c26]">Welcome to SaveSmart
-      </h1>
-      <p class="mt-2 text-[#5f5d6b]">Your journey to financial clarity starts here.</p>
+      <h1 class="mt-6 saas-heading text-2xl text-slate-900">Capital Portal</h1>
+      <p class="mt-2 text-sm text-slate-500">Secure entry to your financial ecosystem.</p>
     </div>
 
-    <div class="glass-card premium-shadow rounded-[2.5rem] p-10 backdrop-blur-3xl">
-      <div class="space-y-2">
-        <h2 class="text-2xl font-bold text-[#1d1c26]">Connexion</h2>
-        <p class="text-sm text-[#5f5d6b]">Enter your details to access your dashboard.</p>
+    <!-- Auth Module -->
+    <div class="glass-card shadow-2xl p-8 sm:p-10">
+      <div class="space-y-1">
+        <h2 class="saas-heading text-xl text-slate-900">Sign In</h2>
+        <p class="text-xs font-medium text-slate-400 uppercase tracking-widest">Authentication Required</p>
       </div>
 
       @if (errorMessage()) {
-      <div
-        class="mt-6 animate-in fade-in slide-in-from-top-2 flex items-center gap-3 rounded-2xl border border-rose-500/20 bg-rose-500/5 px-4 py-3 text-sm text-rose-700">
-        <span>⚠️</span> {{ errorMessage() }}
+      <div class="mt-6 rounded-lg border border-rose-100 bg-rose-50 px-4 py-3 text-xs font-bold text-rose-700">
+        {{ errorMessage() }}
       </div>
       }
 
       @if (successMessage()) {
-      <div
-        class="mt-6 animate-in fade-in slide-in-from-top-2 flex items-center gap-3 rounded-2xl border border-emerald-500/20 bg-emerald-500/5 px-4 py-3 text-sm text-emerald-700">
-        <span>✅</span> {{ successMessage() }}
+      <div class="mt-6 rounded-lg border border-emerald-100 bg-emerald-50 px-4 py-3 text-xs font-bold text-emerald-700">
+        {{ successMessage() }}
       </div>
       }
 
-      <form class="mt-8 space-y-5" [formGroup]="loginForm" (ngSubmit)="submitLogin()">
+      <form class="mt-8 space-y-6" [formGroup]="loginForm" (ngSubmit)="submitLogin()">
         <div class="space-y-1.5">
-          <label class="text-[0.65rem] font-bold uppercase tracking-widest text-[#5f5d6b] ml-1">Email Address</label>
-          <input type="email" formControlName="email" class="glass-input w-full" placeholder="e.g. name@example.com" />
+          <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-0.5">Corporate Email</label>
+          <input type="email" formControlName="email" class="glass-input w-full" placeholder="name@domain.com" />
           @if (loginForm.controls.email.touched && loginForm.controls.email.invalid) {
-          <span class="text-[0.65rem] font-bold text-rose-500 ml-1">Please enter a valid email address.</span>
+          <span class="text-[10px] font-bold text-rose-500 ml-0.5">Invalid email format.</span>
           }
         </div>
 
         <div class="space-y-1.5">
-          <label class="text-[0.65rem] font-bold uppercase tracking-widest text-[#5f5d6b] ml-1">Password</label>
-          <input type="password" formControlName="password" class="glass-input w-full"
-            placeholder="Min. 8 characters" />
+          <div class="flex items-center justify-between">
+            <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-0.5">Access Secret</label>
+            <a href="#"
+              class="text-[10px] font-bold text-indigo-600 hover:underline uppercase tracking-widest">Reset</a>
+          </div>
+          <input type="password" formControlName="password" class="glass-input w-full" placeholder="••••••••" />
           @if (loginForm.controls.password.touched && loginForm.controls.password.invalid) {
-          <span class="text-[0.65rem] font-bold text-rose-500 ml-1">Password is required.</span>
+          <span class="text-[10px] font-bold text-rose-500 ml-0.5">Secret key required.</span>
           }
         </div>
 
-        <div class="flex items-center justify-between px-1">
-          <label class="flex items-center gap-2 cursor-pointer group">
-            <input type="checkbox"
-              class="h-4 w-4 rounded border-[#1d1c26]/20 bg-white/50 text-[#ffae58] focus:ring-[#ffae58]">
-            <span class="text-xs font-medium text-[#5f5d6b] group-hover:text-[#1d1c26]">Remember me</span>
-          </label>
-          <a href="#" class="text-xs font-bold text-[#ffae58] hover:underline">Forgot?</a>
-        </div>
-
-        <button type="submit"
-          class="hover-lift w-full mt-2 rounded-2xl bg-[#1d1c26] py-4 text-sm font-bold text-white shadow-xl shadow-[#1d1c26]/20 transition-all hover:brightness-110 disabled:opacity-50"
-          [disabled]="isLoading()">
-          @if (isLoading()) {
-          <span class="flex items-center justify-center gap-2">
-            <span class="h-4 w-4 animate-spin rounded-full border-2 border-white/20 border-t-white"></span>
-            Authenticating...
-          </span>
-          } @else {
-          Sign In
-          }
+        <button type="submit" [disabled]="isLoading()"
+          class="h-11 w-full rounded-lg bg-indigo-600 text-sm font-bold text-white shadow-lg shadow-indigo-600/20 transition-all hover:bg-indigo-700 disabled:opacity-50">
+          {{ isLoading() ? 'Validating Token...' : 'Initialize Session' }}
         </button>
       </form>
 
-      <div class="mt-10 pt-8 border-t border-[#1d1c26]/5 text-center">
-        <p class="text-sm font-medium text-[#5f5d6b]">
-          New to SaveSmart?
-          <a class="font-bold text-[#ffae58] hover:underline" routerLink="/register">Create an account</a>
+      <div class="mt-8 pt-6 border-t border-slate-50 text-center">
+        <p class="text-xs font-semibold text-slate-500">
+          New to the ecosystem?
+          <a class="font-bold text-indigo-600 hover:underline" routerLink="/register">Register Instance</a>
         </p>
       </div>
     </div>
 
-    <p class="mt-10 text-center text-xs font-medium text-[#5f5d6b]/50">
-      &copy; 2026 SaveSmart Financial Logic. All rights reserved.
+    <p class="mt-8 text-center text-[10px] font-bold uppercase tracking-widest text-slate-400">
+      &copy; 2026 SaveSmart Core. Secure Transmission Enabled.
     </p>
   </div>
 </div>

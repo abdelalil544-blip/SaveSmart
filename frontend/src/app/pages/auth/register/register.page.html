@@ -1,91 +1,73 @@
-<div class="min-h-screen flex items-center justify-center p-6">
-  <div class="w-full max-w-xl">
-    <div class="mb-8 text-center">
+<div class="min-h-screen bg-[#F9FAFB] flex flex-col items-center justify-center p-6">
+  <div class="w-full max-w-lg">
+    <!-- Platform Identity -->
+    <div class="mb-10 text-center">
       <div
-        class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-[#ffae58] text-lg font-bold tracking-widest text-[#1d1c26] shadow-xl shadow-[#ffae58]/20">
-        SS
+        class="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-600 shadow-xl shadow-indigo-600/20">
+        <span class="font-['Outfit'] text-sm font-bold tracking-tighter text-white">SS</span>
       </div>
-      <h1 class="mt-6 font-['Playfair_Display'] text-3xl font-bold tracking-tight text-[#1d1c26]">Create your Account
-      </h1>
-      <p class="mt-2 text-sm text-[#5f5d6b]">Join thousands of users managing their wealth smarter.</p>
+      <h1 class="mt-6 saas-heading text-2xl text-slate-900">Provision Instance</h1>
+      <p class="mt-2 text-sm text-slate-500">Initialize your secure financial node.</p>
     </div>
 
-    <div class="glass-card premium-shadow rounded-[2.5rem] p-8 backdrop-blur-3xl">
-      <div class="space-y-2">
-        <h2 class="text-xl font-bold text-[#1d1c26]">Registration</h2>
-        <p class="text-xs text-[#5f5d6b]">Please fill in your details to get started.</p>
+    <!-- Auth Module -->
+    <div class="glass-card shadow-2xl p-8 sm:p-10">
+      <div class="space-y-1">
+        <h2 class="saas-heading text-xl text-slate-900">Registration</h2>
+        <p class="text-xs font-medium text-slate-400 uppercase tracking-widest">System Onboarding</p>
       </div>
 
       @if (errorMessage()) {
-      <div
-        class="mt-6 flex items-center gap-3 rounded-2xl border border-rose-500/20 bg-rose-500/5 px-4 py-3 text-sm text-rose-700">
-        <span>⚠️</span> {{ errorMessage() }}
+      <div class="mt-6 rounded-lg border border-rose-100 bg-rose-50 px-4 py-3 text-xs font-bold text-rose-700">
+        {{ errorMessage() }}
       </div>
       }
 
       @if (successMessage()) {
-      <div
-        class="mt-6 flex items-center gap-3 rounded-2xl border border-emerald-500/20 bg-emerald-500/5 px-4 py-3 text-sm text-emerald-700">
-        <span>✅</span> {{ successMessage() }}
+      <div class="mt-6 rounded-lg border border-emerald-100 bg-emerald-50 px-4 py-3 text-xs font-bold text-emerald-700">
+        {{ successMessage() }}
       </div>
       }
 
-      <form class="mt-8 space-y-4" [formGroup]="registerForm" (ngSubmit)="submitRegister()">
+      <form class="mt-8 space-y-6" [formGroup]="registerForm" (ngSubmit)="submitRegister()">
         <div class="grid gap-4 sm:grid-cols-2">
           <div class="space-y-1.5">
-            <label class="text-[0.6rem] font-bold uppercase tracking-widest text-[#5f5d6b] ml-1">First Name</label>
-            <input type="text" formControlName="firstName" class="glass-input w-full !py-2.5" placeholder="John" />
-            @if (registerForm.controls.firstName.touched && registerForm.controls.firstName.invalid) {
-            <span class="text-[0.6rem] font-bold text-rose-500 ml-1">Required.</span>
-            }
+            <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-0.5">Given Name</label>
+            <input type="text" formControlName="firstName" class="glass-input w-full" placeholder="John" />
           </div>
           <div class="space-y-1.5">
-            <label class="text-[0.6rem] font-bold uppercase tracking-widest text-[#5f5d6b] ml-1">Last Name</label>
-            <input type="text" formControlName="lastName" class="glass-input w-full !py-2.5" placeholder="Doe" />
-            @if (registerForm.controls.lastName.touched && registerForm.controls.lastName.invalid) {
-            <span class="text-[0.6rem] font-bold text-rose-500 ml-1">Required.</span>
-            }
+            <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-0.5">Family Name</label>
+            <input type="text" formControlName="lastName" class="glass-input w-full" placeholder="Doe" />
           </div>
         </div>
 
         <div class="space-y-1.5">
-          <label class="text-[0.6rem] font-bold uppercase tracking-widest text-[#5f5d6b] ml-1">Email Address</label>
-          <input type="email" formControlName="email" class="glass-input w-full !py-2.5" placeholder="john@doe.com" />
-          @if (registerForm.controls.email.touched && registerForm.controls.email.invalid) {
-          <span class="text-[0.6rem] font-bold text-rose-500 ml-1">Required.</span>
-          }
+          <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-0.5">Corporate Email</label>
+          <input type="email" formControlName="email" class="glass-input w-full" placeholder="name@domain.com" />
         </div>
 
         <div class="space-y-1.5">
-          <label class="text-[0.6rem] font-bold uppercase tracking-widest text-[#5f5d6b] ml-1">Password</label>
-          <input type="password" formControlName="password" class="glass-input w-full !py-2.5"
+          <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-0.5">Access Secret</label>
+          <input type="password" formControlName="password" class="glass-input w-full"
             placeholder="Min. 8 characters" />
-          @if (registerForm.controls.password.touched && registerForm.controls.password.invalid) {
-          <span class="text-[0.6rem] font-bold text-rose-500 ml-1">Required.</span>
-          }
         </div>
 
         <div class="space-y-1.5">
-          <label class="text-[0.6rem] font-bold uppercase tracking-widest text-[#5f5d6b] ml-1">Phone Number
+          <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-0.5">Contact Vector
             (Optional)</label>
-          <input type="text" formControlName="phoneNumber" class="glass-input w-full !py-2.5" placeholder="+33 6 ..." />
+          <input type="text" formControlName="phoneNumber" class="glass-input w-full" placeholder="+33 000 000 000" />
         </div>
 
-        <button type="submit"
-          class="hover-lift w-full mt-4 rounded-2xl bg-[#1d1c26] py-3.5 text-sm font-bold text-white shadow-xl shadow-[#1d1c26]/20 transition-all hover:brightness-110 disabled:opacity-50"
-          [disabled]="isLoading()">
-          @if (isLoading()) {
-          Creating account...
-          } @else {
-          Join SaveSmart
-          }
+        <button type="submit" [disabled]="isLoading()"
+          class="h-11 w-full rounded-lg bg-indigo-600 text-sm font-bold text-white shadow-lg shadow-indigo-600/20 transition-all hover:bg-indigo-700 disabled:opacity-50">
+          {{ isLoading() ? 'Deploying...' : 'Initialize Onboarding' }}
         </button>
       </form>
 
-      <div class="mt-8 pt-6 border-t border-[#1d1c26]/5 text-center">
-        <p class="text-sm font-medium text-[#5f5d6b]">
-          Already have an account?
-          <a class="font-bold text-[#ffae58] hover:underline" routerLink="/login">Sign In</a>
+      <div class="mt-8 pt-6 border-t border-slate-50 text-center">
+        <p class="text-xs font-semibold text-slate-500">
+          Already have an instance?
+          <a class="font-bold text-indigo-600 hover:underline" routerLink="/login">Sign In</a>
         </p>
       </div>
     </div>

@@ -1,27 +1,53 @@
 @import "tailwindcss";
 
 @layer utilities {
-  .glass-card {
-    @apply border border-white/60 bg-white/70 backdrop-blur-xl shadow-[0_12px_24px_rgba(25,28,41,0.06)];
-  }
 
-  .glass-input {
-    @apply rounded-2xl border border-white/80 bg-white/80 px-4 py-3 text-sm font-medium text-[#1d1c26] shadow-[0_4px_12px_rgba(25,28,41,0.04)] outline-none transition-all focus:border-[#ffae58] focus:ring-4 focus:ring-[#ffae58]/10;
+  /* Surface / Card Styles */
+  .glass-card {
+    @apply rounded-xl border border-slate-200 bg-white transition-all duration-200;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
   }
 
   .premium-shadow {
-    @apply shadow-[0_20px_40px_rgba(25,28,41,0.08)];
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
   }
 
+  /* Form Elements */
+  .glass-input {
+    @apply h-11 rounded-lg border border-slate-200 bg-white px-3.5 py-2 text-sm font-medium text-slate-900 shadow-sm outline-none transition-all placeholder:text-slate-400 hover:border-slate-300 focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600;
+  }
+
+  /* Navigation Links */
+  .nav-link-active {
+    @apply bg-slate-900 text-white shadow-md;
+  }
+
+  /* Interactive Elements */
   .hover-lift {
-    @apply transition-transform duration-300 hover:-translate-y-1;
+    @apply transition-all duration-200 hover:shadow-lg hover:border-slate-300;
+  }
+
+  /* Specialized typography for SaaS look */
+  .saas-heading {
+    @apply font-['Outfit'] font-semibold tracking-tight;
+  }
+
+  /* Custom Scrollbar for sleek UI */
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    @apply rounded-full bg-slate-200 hover:bg-slate-300;
   }
 }
 
 @layer base {
   body {
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+    @apply antialiased text-slate-900;
   }
 }
-

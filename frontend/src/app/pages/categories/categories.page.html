@@ -1,151 +1,119 @@
-<section class="grid gap-8 lg:grid-cols-[1.4fr_0.6fr] lg:items-center">
-    <div class="space-y-4">
-        <p class="text-[0.65rem] font-bold uppercase tracking-[0.3em] text-[#5f5d6b]">Taxonomy & Structure</p>
-        <h1 class="font-['Playfair_Display'] text-4xl font-bold tracking-tight text-[#1d1c26] sm:text-5xl">
-            Organize your <span class="text-[#ffae58]">Financial Universe.</span>
-        </h1>
-        <p class="max-w-xl text-lg text-[#5f5d6b]">Define the pillars of your wealth. Create meaningful categories to
-            track every flow with precision.</p>
-    </div>
+<div class="space-y-8">
+    <header class="space-y-1">
+        <h1 class="saas-heading text-3xl text-slate-900">Financial Domains</h1>
+        <p class="text-sm text-slate-500">Configure classifications for your resource allocation.</p>
+    </header>
 
-    <div
-        class="glass-card hover-lift rounded-[2.5rem] p-8 text-center sm:text-left transition-all hover:bg-white text-[#1d1c26]">
-        <div class="flex items-center gap-4">
-            <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#ffae58]/10 text-xl">
-                🏷️
+    <div class="grid gap-8 lg:grid-cols-[400px_1fr]">
+        <!-- Form Side -->
+        <section class="space-y-6">
+            <div class="glass-card">
+                <div class="border-b border-slate-100 bg-slate-50/50 px-6 py-4">
+                    <h3 class="saas-heading text-sm text-slate-900">{{ editingId ? 'Modify Domain' : 'Define New Domain'
+                        }}</h3>
+                </div>
+                <div class="p-6">
+                    <form class="space-y-5" (ngSubmit)="submitCategory()">
+                        @if (errorMessage()) {
+                        <p class="text-[10px] font-bold text-rose-600 uppercase tracking-widest">{{ errorMessage() }}
+                        </p>
+                        }
+                        @if (successMessage()) {
+                        <p class="text-[10px] font-bold text-emerald-600 uppercase tracking-widest">{{ successMessage()
+                            }}</p>
+                        }
+
+                        <div class="space-y-1.5">
+                            <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-0.5">Domain
+                                Label</label>
+                            <input type="text" class="glass-input w-full" [(ngModel)]="form.name" name="name"
+                                placeholder="Domain name..." />
+                        </div>
+
+                        <div class="space-y-1.5">
+                            <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-0.5">Flow
+                                Direction</label>
+                            <select class="glass-input w-full" [(ngModel)]="form.type" name="type">
+                                <option value="EXPENSE">Expense Account</option>
+                                <option value="INCOME">Income Source</option>
+                            </select>
+                        </div>
+
+                        <div class="space-y-1.5">
+                            <label
+                                class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-0.5">Signature
+                                Color</label>
+                            <div class="flex items-center gap-3">
+                                <div
+                                    class="relative h-11 w-11 shrink-0 overflow-hidden rounded-lg border border-slate-200">
+                                    <input type="color"
+                                        class="absolute -inset-2 h-16 w-16 cursor-pointer border-none bg-transparent"
+                                        [(ngModel)]="form.color" name="color">
+                                </div>
+                                <input type="text" class="glass-input flex-1 font-mono uppercase"
+                                    [(ngModel)]="form.color" name="color_text" disabled />
+                            </div>
+                        </div>
+
+                        <div class="flex flex-col gap-2 pt-2">
+                            <button type="submit" [disabled]="isSaving()"
+                                class="h-11 rounded-lg bg-indigo-600 text-sm font-bold text-white transition-all hover:bg-indigo-700 shadow-sm disabled:opacity-50">
+                                {{ editingId ? 'Update Configuration' : 'Initialize Domain' }}
+                            </button>
+                            @if (editingId) {
+                            <button type="button" (click)="cancelEdit()"
+                                class="h-11 rounded-lg border border-slate-200 bg-white text-sm font-bold text-slate-600 transition-all hover:bg-slate-50">
+                                Cancel Refinement
+                            </button>
+                            }
+                        </div>
+                    </form>
+                </div>
             </div>
-            <div>
-                <h2 class="font-['Playfair_Display'] text-2xl font-bold">{{ categories().length }}</h2>
-                <p class="text-xs font-bold uppercase tracking-widest text-[#5f5d6b]">Active Dimensions</p>
+        </section>
+
+        <!-- List Side -->
+        <section class="glass-card overflow-hidden">
+            <div class="border-b border-slate-100 bg-slate-50/50 px-6 py-4">
+                <h3 class="saas-heading text-sm text-slate-900">Active Taxonomy ({{ categories().length }})</h3>
             </div>
-        </div>
-    </div>
-</section>
-
-<section class="grid gap-8 lg:grid-cols-[0.7fr_1.3fr]">
-    <div class="space-y-6">
-        <form class="glass-card premium-shadow group rounded-[2.5rem] p-8 transition-all hover:bg-white"
-            (ngSubmit)="submitCategory()">
-            <div class="flex items-start justify-between">
-                <div class="space-y-1">
-                    <h2 class="font-['Playfair_Display'] text-2xl font-bold text-[#1d1c26]">
-                        {{ editingId ? 'Refine Category' : 'Design Category' }}
-                    </h2>
-                    <p class="text-xs font-medium text-[#5f5d6b]">Define a new financial domain.</p>
-                </div>
-                @if (editingId) {
-                <button type="button"
-                    class="hover-lift rounded-xl border border-[#1d1c26]/10 px-3 py-1.5 text-[0.65rem] font-bold uppercase tracking-widest text-[#1d1c26] transition-all hover:bg-[#1d1c26] hover:text-white"
-                    (click)="cancelEdit()">
-                    Cancel
-                </button>
-                }
-            </div>
-
-            <div class="mt-8 space-y-5">
-                @if (errorMessage()) {
-                <div
-                    class="animate-in fade-in slide-in-from-top-2 rounded-2xl border border-rose-500/10 bg-rose-500/5 px-4 py-3 text-xs font-medium text-rose-700">
-                    {{ errorMessage() }}
-                </div>
-                }
-                @if (successMessage()) {
-                <div
-                    class="animate-in fade-in slide-in-from-top-2 rounded-2xl border border-emerald-500/10 bg-emerald-500/5 px-4 py-3 text-xs font-medium text-emerald-700">
-                    {{ successMessage() }}
-                </div>
-                }
-
-                <div class="space-y-1.5">
-                    <label class="text-[0.6rem] font-bold uppercase tracking-widest text-[#5f5d6b] ml-1">Label
-                        Name</label>
-                    <input type="text" class="glass-input w-full" [(ngModel)]="form.name" name="name"
-                        placeholder="e.g. Investment, Leisure, Utils">
-                </div>
-
-                <div class="space-y-1.5">
-                    <label class="text-[0.6rem] font-bold uppercase tracking-widest text-[#5f5d6b] ml-1">Domain
-                        Type</label>
-                    <select class="glass-input w-full" [(ngModel)]="form.type" name="type">
-                        <option value="EXPENSE">Expense Account</option>
-                        <option value="INCOME">Income Source</option>
-                    </select>
-                </div>
-
-                <div class="space-y-1.5">
-                    <label class="text-[0.6rem] font-bold uppercase tracking-widest text-[#5f5d6b] ml-1">Signature
-                        Color</label>
-                    <div class="flex items-center gap-3">
-                        <input type="color" class="h-10 w-16 cursor-pointer rounded-xl border-none bg-transparent"
-                            [(ngModel)]="form.color" name="color">
-                        <span class="text-xs font-mono text-[#5f5d6b] uppercase">{{ form.color }}</span>
-                    </div>
-                </div>
-
-                <button type="submit"
-                    class="hover-lift w-full mt-4 rounded-2xl bg-[#1d1c26] py-3.5 text-sm font-bold text-white shadow-xl shadow-[#1d1c26]/20 transition-all hover:brightness-110 disabled:opacity-50"
-                    [disabled]="isSaving()">
-                    {{ editingId ? 'Update Identity' : 'Initialize Domain' }}
-                </button>
-            </div>
-        </form>
-    </div>
-
-    <div class="space-y-6">
-        <div class="glass-card rounded-[2.5rem] p-8">
-            <h2 class="font-['Playfair_Display'] text-2xl font-bold text-[#1d1c26]">Financial Taxonomy</h2>
-
-            @if (isLoading()) {
-            <div class="mt-12 flex flex-col items-center gap-4 py-8">
-                <div class="h-8 w-8 animate-spin rounded-full border-2 border-[#ffae58] border-t-transparent"></div>
-                <p class="text-xs font-bold uppercase tracking-widest text-[#5f5d6b]/60">Indexing Domains...</p>
-            </div>
-            } @else {
-            <div class="mt-8 grid gap-4 overflow-y-auto max-h-[600px] pr-2 custom-scrollbar">
-                @if (!categories().length) {
-                <div class="py-12 text-center rounded-3xl border border-dashed border-[#1d1c26]/10">
-                    <p class="text-sm font-medium text-[#5f5d6b]">No categories defined yet.</p>
+            <div class="p-6">
+                @if (isLoading()) {
+                <div class="space-y-4">
+                    <div class="h-12 w-full animate-pulse rounded-lg bg-slate-100"></div>
+                    <div class="h-12 w-full animate-pulse rounded-lg bg-slate-100"></div>
+                    <div class="h-12 w-full animate-pulse rounded-lg bg-slate-100"></div>
                 </div>
                 } @else {
                 <div class="grid gap-4 sm:grid-cols-2">
                     @for (cat of categories(); track cat.id) {
-                    <article
-                        class="glass-card hover-lift group relative overflow-hidden rounded-2xl bg-white/40 p-5 transition-all hover:bg-white/80">
-                        <div class="flex items-start justify-between gap-4">
-                            <div class="flex items-center gap-3">
-                                <div class="h-10 w-10 shrink-0 rounded-xl" [style.background]="cat.color || '#1d1c26'">
-                                </div>
-                                <div class="space-y-0.5">
-                                    <h3 class="font-['Playfair_Display'] text-lg font-bold text-[#1d1c26]">
-                                        {{ cat.name }}
-                                    </h3>
-                                    <p class="text-[0.65rem] font-bold uppercase tracking-widest"
-                                        [class.text-emerald-600]="cat.type === 'INCOME'"
-                                        [class.text-rose-500]="cat.type === 'EXPENSE'">
-                                        {{ cat.type }}
-                                    </p>
-                                </div>
+                    <div
+                        class="group flex items-center justify-between rounded-xl border border-slate-100 bg-white p-4 shadow-sm transition-all hover:border-slate-200 hover:shadow-md">
+                        <div class="flex items-center gap-4">
+                            <div class="h-10 w-10 shrink-0 rounded-lg shadow-inner ring-1 ring-slate-200/50"
+                                [style.backgroundColor]="cat.color || '#F1F5F9'"></div>
+                            <div class="space-y-0.5">
+                                <p class="text-sm font-bold text-slate-900">{{ cat.name }}</p>
+                                <p class="text-[10px] font-bold uppercase tracking-widest"
+                                    [class.text-emerald-600]="cat.type === 'INCOME'"
+                                    [class.text-slate-400]="cat.type !== 'INCOME'">{{ cat.type }}</p>
                             </div>
                         </div>
-
-                        <div class="mt-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <button
-                                class="flex-1 rounded-xl bg-[#1d1c26]/5 py-2 text-[0.65rem] font-bold uppercase tracking-widest text-[#1d1c26] transition-all hover:bg-[#1d1c26] hover:text-white"
-                                (click)="editCategory(cat)">
-                                Edit
+                        <div class="flex gap-1 opacity-0 transition-opacity group-hover:opacity-100">
+                            <button (click)="editCategory(cat)"
+                                class="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 transition-colors hover:bg-slate-50">
+                                ✎
                             </button>
-                            <button
-                                class="rounded-xl border border-rose-500/10 px-4 py-2 text-[0.65rem] font-bold uppercase tracking-widest text-rose-600 transition-all hover:bg-rose-600 hover:text-white"
-                                (click)="deleteCategory(cat.id)">
-                                Delete
+                            <button (click)="deleteCategory(cat.id)"
+                                class="flex h-8 w-8 items-center justify-center rounded-lg border border-rose-100 bg-white text-rose-500 transition-colors hover:bg-rose-50">
+                                ✕
                             </button>
                         </div>
-                    </article>
+                    </div>
                     }
                 </div>
                 }
             </div>
-            }
-        </div>
+        </section>
     </div>
-</section>
+</div>
