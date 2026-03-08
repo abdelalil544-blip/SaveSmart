@@ -1,83 +1,119 @@
-<div class="space-y-8">
+<div class="relative space-y-10 pb-10">
+  <!-- Decorative background elements -->
+  <div class="absolute -top-24 -right-24 h-96 w-96 rounded-full bg-indigo-500/5 blur-3xl"></div>
+  <div class="absolute top-1/2 -left-24 h-64 w-64 rounded-full bg-purple-500/5 blur-2xl"></div>
+
   <!-- Header Section -->
-  <header class="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
-    <div class="space-y-1">
-      <h1 class="saas-heading text-3xl text-slate-900">Financial Command</h1>
-      <p class="text-sm text-slate-500">Monitor your capital efficiency and resource distribution.</p>
+  <header class="relative flex flex-col justify-between gap-6 sm:flex-row sm:items-end">
+    <div class="space-y-2">
+      <h1 class="saas-heading text-4xl tracking-tight">Financial Command</h1>
+      <p class="text-sm font-medium text-slate-500 flex items-center gap-2">
+        <span class="h-1.5 w-1.5 rounded-full bg-indigo-500 animate-pulse"></span>
+        Monitor your capital efficiency and resource distribution.
+      </p>
     </div>
+
     <div class="flex items-center gap-3">
-      <div class="flex items-center rounded-lg border border-slate-200 bg-white p-1 shadow-sm">
-        <select class="border-none bg-transparent px-3 py-1.5 text-xs font-semibold text-slate-600 focus:ring-0"
+      <div
+        class="flex items-center rounded-2xl border border-slate-200/60 bg-white/80 p-1.5 shadow-sm backdrop-blur-md">
+        <select
+          class="border-none bg-transparent px-4 py-2 text-xs font-bold text-slate-700 focus:ring-0 cursor-pointer"
           [ngModel]="selectedMonth()" (ngModelChange)="selectedMonth.set($event); loadDashboard()">
           @for (month of months; track month.value) {
           <option [ngValue]="month.value">{{ month.label }}</option>
           }
         </select>
-        <div class="h-4 w-[1px] bg-slate-200 mx-1"></div>
-        <select class="border-none bg-transparent px-3 py-1.5 text-xs font-semibold text-slate-600 focus:ring-0"
+        <div class="h-5 w-px bg-slate-200 mx-1"></div>
+        <select
+          class="border-none bg-transparent px-4 py-2 text-xs font-bold text-slate-700 focus:ring-0 cursor-pointer"
           [ngModel]="selectedYear()" (ngModelChange)="selectedYear.set($event); loadDashboard()">
           @for (year of years(); track year) {
           <option [ngValue]="year">{{ year }}</option>
           }
         </select>
       </div>
-      <button
-        class="flex h-9 items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 text-xs font-bold text-slate-600 transition-colors hover:bg-slate-50">
-        📥 Export Report
+      <button (click)="resetFilters()"
+        class="flex h-11 items-center gap-2 rounded-2xl border border-slate-200/60 bg-white px-5 text-xs font-bold text-slate-700 transition-all hover:bg-slate-50 hover:border-slate-300 shadow-sm active:scale-95">
+        🔄 Initialiser
       </button>
     </div>
   </header>
 
   @if (errorMessage()) {
-  <div class="rounded-xl border border-rose-200 bg-rose-50 p-4 text-sm font-medium text-rose-800">
-    {{ errorMessage() }}
+  <div
+    class="relative rounded-2xl border border-rose-200 bg-rose-50/50 p-4 pr-12 text-sm font-semibold text-rose-800 backdrop-blur-md animate-in fade-in slide-in-from-top-4 duration-300">
+    <span class="mr-2">⚠️</span> {{ errorMessage() }}
+    <button (click)="clearMessages()"
+      class="absolute right-4 top-1/2 -translate-y-1/2 text-rose-400 hover:text-rose-600 transition-colors">
+      ✕
+    </button>
   </div>
   }
 
   <!-- Stats Grid -->
   <section class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
     @for (stat of stats(); track stat.label) {
-    <div class="glass-card hover-lift p-6">
+    <div class="glass-card hover-elevate group p-7">
       <div class="flex items-center justify-between">
-        <p class="text-xs font-semibold uppercase tracking-wider text-slate-500">{{ stat.label }}</p>
-        <div class="h-2 w-2 rounded-full" [class.bg-emerald-500]="stat.type === 'income'"
-          [class.bg-rose-500]="stat.type === 'expense'"
-          [class.bg-indigo-500]="stat.type !== 'income' && stat.type !== 'expense'"></div>
+        <p
+          class="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 group-hover:text-indigo-500 transition-colors">
+          {{ stat.label }}</p>
+        <div
+          class="h-10 w-10 rounded-xl flex items-center justify-center transition-all duration-300 group-hover:scale-110"
+          [class.bg-emerald-500/10]="stat.type === 'income'" [class.bg-rose-500/10]="stat.type === 'expense'"
+          [class.bg-indigo-500/10]="stat.type !== 'income' && stat.type !== 'expense'">
+          <span class="text-lg" [class.text-emerald-600]="stat.type === 'income'"
+            [class.text-rose-600]="stat.type === 'expense'"
+            [class.text-indigo-600]="stat.type !== 'income' && stat.type !== 'expense'">
+            {{ stat.type === 'income' ? '↗' : stat.type === 'expense' ? '↘' : '⚖' }}
+          </span>
+        </div>
       </div>
       <div class="mt-4 flex items-baseline gap-2">
-        <h2 class="saas-heading text-2xl text-slate-900">{{ stat.value | currency:'EUR':'symbol':'1.0-0' }}</h2>
+        <h2 class="saas-heading text-3xl">{{ stat.value | currency:'EUR':'symbol':'1.0-0' }}</h2>
       </div>
-      <p class="mt-2 text-[10px] font-bold uppercase tracking-widest text-slate-400">{{ stat.delta }}</p>
+      <div class="mt-4 pt-4 border-t border-slate-50 flex items-center justify-between">
+        <span class="text-[10px] font-bold text-slate-400">{{ stat.delta }}</span>
+        <span class="h-1 w-12 rounded-full bg-slate-100 overflow-hidden">
+          <span class="block h-full bg-slate-300 transition-all duration-1000 w-1/2"></span>
+        </span>
+      </div>
     </div>
     }
   </section>
 
   <!-- Quick Entry Panel -->
-  <section class="glass-card overflow-hidden">
-    <div class="border-b border-slate-100 bg-slate-50/50 px-6 py-4">
+  <section class="glass-card overflow-hidden shadow-indigo-100/20">
+    <div class="border-b border-slate-100/60 bg-slate-50/30 px-8 py-5">
       <div class="flex items-center justify-between">
-        <h3 class="saas-heading text-sm text-slate-900">Quick Ledger Entry</h3>
-        <a routerLink="/app/categories" class="text-xs font-semibold text-indigo-600 hover:text-indigo-700">Configure
-          Domains →</a>
+        <div class="flex items-center gap-3">
+          <div class="h-2 w-2 rounded-full bg-indigo-600"></div>
+          <h3 class="saas-heading text-base">Quick Ledger Entry</h3>
+        </div>
+        <a routerLink="/app/categories"
+          class="text-xs font-bold text-indigo-600 hover:text-indigo-700 transition-colors">Configure Domains →</a>
       </div>
     </div>
-    <div class="p-6">
+    <div class="p-8">
       <form class="flex flex-col gap-6 lg:flex-row lg:items-end" (ngSubmit)="submitTransaction()">
-        <div class="flex-1 space-y-1.5">
-          <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-0.5">Classification</label>
-          <select class="glass-input w-full" [(ngModel)]="transactionForm.type" name="type">
+        <div class="flex-1 space-y-2">
+          <label class="text-[10px] font-extrabold uppercase tracking-widest text-slate-500 ml-1">Classification</label>
+          <select class="premium-input w-full appearance-none cursor-pointer" [(ngModel)]="transactionForm.type"
+            name="type">
             <option value="EXPENSE">Operational Expense</option>
             <option value="INCOME">Capital Inflow</option>
           </select>
         </div>
-        <div class="flex-1 space-y-1.5">
-          <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-0.5">Value (EUR)</label>
-          <input type="number" class="glass-input w-full" placeholder="0.00" name="amount"
+        <div class="flex-1 space-y-2">
+          <label class="text-[10px] font-extrabold uppercase tracking-widest text-slate-500 ml-1">Value (EUR)</label>
+          <input type="number" class="premium-input w-full" placeholder="0.00" name="amount"
             [(ngModel)]="transactionForm.amount" />
         </div>
-        <div class="flex-1 space-y-1.5">
-          <label class="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-0.5">Reference Domain</label>
-          <select class="glass-input w-full" [(ngModel)]="transactionForm.categoryId" name="categoryId">
+        <div class="flex-1 space-y-2">
+          <label class="text-[10px] font-extrabold uppercase tracking-widest text-slate-500 ml-1">Reference
+            Domain</label>
+          <select class="premium-input w-full appearance-none cursor-pointer" [(ngModel)]="transactionForm.categoryId"
+            name="categoryId">
             <option value="">Select Domain...</option>
             @for (cat of filteredCategories; track cat.id) {
             <option [value]="cat.id">{{ cat.name }}</option>
@@ -85,49 +121,68 @@
           </select>
         </div>
         <button type="submit" [disabled]="isSaving()"
-          class="h-11 rounded-lg bg-indigo-600 px-8 text-sm font-bold text-white transition-all hover:bg-indigo-700 disabled:opacity-50 lg:w-auto">
-          {{ isSaving() ? 'Processing...' : 'Execute Entry' }}
+          class="h-12 rounded-xl premium-gradient px-10 text-sm font-bold text-white transition-all hover:shadow-lg hover:shadow-indigo-500/25 active:scale-95 disabled:opacity-50 lg:w-auto">
+          {{ isSaving() ? 'Recording...' : 'Execute Entry' }}
         </button>
       </form>
       @if (successMessage()) {
-      <p class="mt-4 text-xs font-bold text-emerald-600">✓ {{ successMessage() }}</p>
+      <p class="mt-4 text-xs font-bold text-emerald-600 flex items-center gap-2 animate-in fade-in duration-500">
+        <span class="h-5 w-5 rounded-full bg-emerald-100 flex items-center justify-center">✓</span>
+        {{ successMessage() }}
+      </p>
       }
     </div>
   </section>
 
   <!-- Analysis Grid -->
-  <section class="grid gap-6 lg:grid-cols-3">
+  <section class="grid gap-8 lg:grid-cols-3">
     <!-- Category Analysis -->
-    <div class="glass-card lg:col-span-2">
-      <div class="border-b border-slate-100 px-6 py-4">
-        <h3 class="saas-heading text-sm text-slate-900">Allocation Performance</h3>
+    <div class="glass-card lg:col-span-2 group">
+      <div class="border-b border-slate-100/60 px-8 py-5 flex items-center justify-between">
+        <h3 class="saas-heading text-base">Allocation Performance</h3>
+        <span
+          class="text-[10px] font-bold text-slate-400 group-hover:text-indigo-500 transition-colors uppercase tracking-widest">Efficiency
+          metrics</span>
       </div>
-      <div class="p-6">
+      <div class="p-8">
         @if (isLoading()) {
-        <div class="animate-pulse space-y-6">
-          <div class="h-10 rounded bg-slate-100"></div>
-          <div class="h-10 rounded bg-slate-100"></div>
-          <div class="h-10 rounded bg-slate-100"></div>
+        <div class="space-y-8">
+          <div class="h-14 rounded-2xl bg-slate-50 animate-pulse"></div>
+          <div class="h-14 rounded-2xl bg-slate-50 animate-pulse"></div>
+          <div class="h-14 rounded-2xl bg-slate-50 animate-pulse"></div>
         </div>
         } @else if (!categories().length) {
-        <div class="py-12 text-center">
-          <p class="text-sm text-slate-400">No allocation data available for this period.</p>
+        <div class="py-16 text-center">
+          <div class="text-4xl mb-4">📊</div>
+          <p class="text-sm font-medium text-slate-400">No allocation data available for this period.</p>
         </div>
         } @else {
-        <div class="space-y-6">
+        <div class="grid gap-8 sm:grid-cols-2">
           @for (item of categories(); track item.name) {
-          <div class="space-y-2">
-            <div class="flex items-center justify-between text-xs font-semibold">
-              <span class="text-slate-700">{{ item.name }}</span>
-              <span class="text-slate-500">
-                {{ item.spent | currency:'EUR':'symbol':'1.0-0' }} /
-                @if (item.hasBudget) { {{ item.limit | currency:'EUR':'symbol':'1.0-0' }} } @else { No budget }
-              </span>
+          <div class="space-y-4 p-4 rounded-2xl transition-all duration-300 hover:bg-slate-50/50">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-3">
+                <div class="h-3 w-3 rounded-full" [style.background]="item.color"></div>
+                <span class="text-xs font-bold text-slate-700 uppercase tracking-tight">{{ item.name }}</span>
+              </div>
+              <span class="text-[10px] font-black text-slate-400">{{ getPercent(item) }}%</span>
             </div>
             <div class="h-2 w-full overflow-hidden rounded-full bg-slate-100">
-              <div class="h-full rounded-full transition-all duration-700" [style.width.%]="getPercent(item)"
-                [style.background]="item.color"></div>
+              <div class="h-full rounded-full transition-all duration-1000 ease-out" [style.width.%]="getPercent(item)"
+                [style.background]="item.hasBudget && item.spent > item.limit ? '#ef4444' : item.color"></div>
             </div>
+            <div class="flex justify-between text-[10px] font-bold">
+              <span [class.text-rose-600]="item.hasBudget && item.spent > item.limit" class="text-slate-500">
+                {{ item.spent | currency:'EUR':'symbol':'1.0-0' }} spent
+              </span>
+              <span class="text-slate-400">/ {{ item.limit | currency:'EUR':'symbol':'1.0-0' }} limit</span>
+            </div>
+            @if (item.hasBudget && item.spent > item.limit) {
+            <div
+              class="flex items-center gap-1.5 rounded-lg bg-rose-50 px-2 py-1 text-[9px] font-black uppercase tracking-tighter text-rose-600 animate-in fade-in slide-in-from-left-2">
+              <span>⚠️</span> Budget Exceeded by {{ (item.spent - item.limit) | currency:'EUR':'symbol':'1.0-0' }}
+            </div>
+            }
           </div>
           }
         </div>
@@ -137,21 +192,31 @@
 
     <!-- Momentum Indicators -->
     <div class="glass-card">
-      <div class="border-b border-slate-100 px-6 py-4">
-        <h3 class="saas-heading text-sm text-slate-900">Momentum Indicators</h3>
+      <div class="border-b border-slate-100/60 px-8 py-5">
+        <h3 class="saas-heading text-base">Momentum Indicators</h3>
       </div>
-      <div class="p-6 space-y-6">
+      <div class="p-8 space-y-6">
         @for (highlight of highlights(); track highlight.title) {
-        <div class="flex items-center gap-4 rounded-lg bg-slate-50 p-4 transition-colors hover:bg-slate-100">
-          <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-white shadow-sm text-lg">
-            🎯
+        <div
+          class="flex items-center gap-5 rounded-2xl bg-slate-50/50 p-5 transition-all duration-300 hover:bg-white hover:shadow-md hover:shadow-slate-200/50">
+          <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-white shadow-sm text-xl">
+            {{ $index === 0 ? '📈' : $index === 1 ? '🎯' : '⏳' }}
           </div>
-          <div class="space-y-0.5">
-            <p class="text-xs font-bold text-slate-900">{{ highlight.title }}</p>
-            <p class="text-[10px] font-medium text-slate-500 uppercase tracking-wider">{{ highlight.detail }}</p>
+          <div class="space-y-1">
+            <p class="text-xs font-extrabold text-slate-900 uppercase tracking-tight">{{ highlight.title }}</p>
+            <p class="text-[10px] font-bold text-indigo-500 uppercase tracking-widest">{{ highlight.detail }}</p>
           </div>
         </div>
         }
+
+        <!-- Premium call to action -->
+        <div class="mt-8 rounded-2xl accent-gradient p-6 text-white shadow-lg shadow-purple-500/20">
+          <p class="text-[10px] font-black uppercase tracking-widest opacity-80">Pro Optimization</p>
+          <p class="mt-2 text-sm font-bold">Optimize your savings with AI-driven insights.</p>
+          <button
+            class="mt-4 w-full rounded-xl bg-white/20 py-2.5 text-xs font-black uppercase tracking-widest hover:bg-white/30 transition-colors">Analyze
+            now</button>
+        </div>
       </div>
     </div>
   </section>

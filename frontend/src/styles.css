@@ -1,40 +1,72 @@
 @import "tailwindcss";
 
+@layer theme {
+  :root {
+    --primary: 79, 70, 229;
+    /* Indigo 600 */
+    --primary-light: 99, 102, 241;
+    --accent: 14, 165, 233;
+    /* Sky 500 */
+    --success: 16, 185, 129;
+    /* Emerald 500 */
+    --warning: 245, 158, 11;
+    /* Amber 500 */
+    --error: 239, 68, 68;
+    /* Red 500 */
+    --bg-main: 248, 250, 252;
+    /* Slate 50 */
+    --card-bg: 255, 255, 255;
+    --text-main: 15, 23, 42;
+    /* Slate 900 */
+    --text-muted: 100, 116, 139;
+    /* Slate 500 */
+  }
+}
+
 @layer utilities {
 
-  /* Surface / Card Styles */
+  /* Surfaces & Premium Effects */
   .glass-card {
-    @apply rounded-xl border border-slate-200 bg-white transition-all duration-200;
-    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    @apply rounded-2xl border border-slate-200/60 bg-white/80 transition-all duration-300;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
   }
 
-  .premium-shadow {
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  .premium-gradient {
+    background: linear-gradient(135deg, rgb(var(--primary)) 0%, rgb(var(--primary-light)) 100%);
+  }
+
+  .accent-gradient {
+    background: linear-gradient(135deg, rgb(var(--accent)) 0%, #a855f7 100%);
+  }
+
+  .hover-elevate {
+    @apply transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-indigo-500/10;
   }
 
   /* Form Elements */
-  .glass-input {
-    @apply h-11 rounded-lg border border-slate-200 bg-white px-3.5 py-2 text-sm font-medium text-slate-900 shadow-sm outline-none transition-all placeholder:text-slate-400 hover:border-slate-300 focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600;
+  .premium-input {
+    @apply h-12 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-medium text-slate-900 shadow-sm outline-none transition-all placeholder:text-slate-400 hover:border-indigo-300 focus:border-indigo-600 focus:ring-4 focus:ring-indigo-500/10;
   }
 
-  /* Navigation Links */
-  .nav-link-active {
-    @apply bg-slate-900 text-white shadow-md;
+  /* Navigation */
+  .nav-active {
+    @apply bg-indigo-600 text-white shadow-lg shadow-indigo-200;
   }
 
-  /* Interactive Elements */
-  .hover-lift {
-    @apply transition-all duration-200 hover:shadow-lg hover:border-slate-300;
-  }
-
-  /* Specialized typography for SaaS look */
+  /* Typography */
   .saas-heading {
-    @apply font-['Outfit'] font-semibold tracking-tight;
+    @apply font-['Outfit'] font-bold tracking-tight text-slate-900;
   }
 
-  /* Custom Scrollbar for sleek UI */
+  .text-premium-gradient {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(135deg, #4f46e5 0%, #9333ea 100%);
+  }
+
+  /* Custom Scrollbar */
   .custom-scrollbar::-webkit-scrollbar {
-    width: 6px;
+    width: 4px;
   }
 
   .custom-scrollbar::-webkit-scrollbar-track {
@@ -48,6 +80,6 @@
 
 @layer base {
   body {
-    @apply antialiased text-slate-900;
+    @apply antialiased bg-slate-50 text-slate-900 selection:bg-indigo-100 selection:text-indigo-900;
   }
 }

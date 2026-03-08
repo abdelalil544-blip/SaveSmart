@@ -72,7 +72,7 @@ export class DashboardPage implements OnInit {
         const spent = expenses.filter(e => e.categoryId === cat.id).reduce((sum, e) => sum + (e.amount || 0), 0);
         const budget = budgets.find(b => b.categoryId === cat.id);
         const limit = budget?.budgetAmount || 0;
-        return { name: cat.name, spent, limit: limit || Math.max(spent, 1), color: cat.color || '#6366f1', hasBudget: !!limit };
+        return { id: cat.id, name: cat.name, spent, limit: limit || Math.max(spent, 1), color: cat.color || '#6366f1', hasBudget: !!limit };
       })
       .filter(i => i.spent > 0 || i.hasBudget)
       .sort((a, b) => b.spent - a.spent);
@@ -125,6 +125,19 @@ export class DashboardPage implements OnInit {
     const userId = this.tokenService.getUserId();
     if (!userId || !this.transactionForm.amount || !this.transactionForm.categoryId) return this.errorMessage.set('All fields are mandatory.');
 
+    // Pre-validation: Prevent exceeding budget for expenses
+    if (this.transactionForm.type === 'EXPENSE') {
+      const catId = Number(this.transactionForm.categoryId);
+      const cat = this.categories().find(c => c.id === catId);
+      const newAmount = this.transactionForm.amount || 0;
+
+      if (cat && cat.hasBudget && (cat.spent + newAmount > cat.limit)) {
+        this.errorMessage.set(`Opération annulée : Cette dépense dépasse votre budget de ${cat.limit}€ pour "${cat.name}".`);
+        setTimeout(() => this.errorMessage.set(null), 5000);
+        return;
+      }
+    }
+
     this.isSaving.set(true);
     const payload = { ...this.transactionForm, amount: this.transactionForm.amount as number };
     const service = this.transactionForm.type === 'INCOME' ? this.incomesService : this.expensesService;
@@ -133,13 +146,29 @@ export class DashboardPage implements OnInit {
         this.successMessage.set('Entry recorded.');
         this.resetForm();
         this.loadDashboard();
+        setTimeout(() => this.successMessage.set(null), 5000);
       },
-      error: () => this.errorMessage.set('Failed to save entry.')
+      error: () => {
+        this.errorMessage.set('Failed to save entry.');
+        setTimeout(() => this.errorMessage.set(null), 5000);
+      }
     });
+  }
+
+  clearMessages() {
+    this.errorMessage.set(null);
+    this.successMessage.set(null);
   }
 
   private resetForm() {
     this.transactionForm = { ...this.transactionForm, amount: null, categoryId: '', description: '' };
+  }
+
+  resetFilters() {
+    const now = new Date();
+    this.selectedMonth.set(now.getMonth() + 1);
+    this.selectedYear.set(now.getFullYear());
+    this.loadDashboard();
   }
 
   getPercent(item: any): number {
