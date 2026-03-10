@@ -22,7 +22,8 @@ export class GoalsPage implements OnInit {
   isSaving = signal(false);
   errorMessage = signal<string | null>(null);
 
-  // Modal/Form State
+  // Form state
+  today = new Date().toISOString().split('T')[0];
   showAddModal = signal(false);
   newGoal: SavingGoalCreate = {
     name: '',
@@ -82,6 +83,11 @@ export class GoalsPage implements OnInit {
       return;
     }
 
+    if ((this.newGoal.currentAmount || 0) >= this.newGoal.targetAmount) {
+      this.errorMessage.set('Le montant économisé doit être strictement inférieur à l\'objectif.');
+      return;
+    }
+
     this.isSaving.set(true);
     this.goalsService.create(userId, this.newGoal)
       .pipe(finalize(() => this.isSaving.set(false)))
@@ -109,6 +115,12 @@ export class GoalsPage implements OnInit {
 
     const newAmount = parseFloat(newAmountStr);
     if (isNaN(newAmount)) return;
+
+    if (newAmount >= goal.targetAmount) {
+      this.errorMessage.set('Le montant économisé doit être strictement inférieur à l\'objectif.');
+      setTimeout(() => this.errorMessage.set(null), 5000);
+      return;
+    }
 
     this.goalsService.update(goal.id, { currentAmount: newAmount }).subscribe({
       next: () => this.loadGoals(),

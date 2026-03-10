@@ -38,6 +38,10 @@
             class="rounded-xl px-4 py-2 text-xs font-bold text-slate-500 transition-all hover:text-indigo-600 hover:bg-white/50">
             Categories
           </a>
+          <a routerLink="/app/profile" routerLinkActive="bg-white text-indigo-600 shadow-sm ring-1 ring-slate-200"
+            class="rounded-xl px-4 py-2 text-xs font-bold text-slate-500 transition-all hover:text-indigo-600 hover:bg-white/50">
+            Profile
+          </a>
         </nav>
       </div>
 
@@ -47,10 +51,10 @@
           class="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white shadow-sm transition-all hover:bg-slate-50 hover:border-slate-300">
           <span class="text-slate-500 text-lg">🔔</span>
         </button>
-        <div
+        <a routerLink="/app/profile"
           class="flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 ring-2 ring-indigo-50 shadow-inner group cursor-pointer hover:ring-indigo-200 transition-all">
-          <span class="text-[10px] font-black text-slate-600 group-hover:text-indigo-600">JD</span>
-        </div>
+          <span class="text-[10px] font-black text-slate-600 group-hover:text-indigo-600">{{ userInitials() }}</span>
+        </a>
       </div>
     </div>
   </header>

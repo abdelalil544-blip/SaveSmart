@@ -127,12 +127,13 @@
           <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Current Saved</label>
           <input type="number" [(ngModel)]="newGoal.currentAmount" name="currentAmount" placeholder="0.00"
             class="w-full rounded-lg border-slate-200 px-3 py-2 text-sm focus:border-indigo-500 focus:ring-indigo-500">
+          <p class="text-[9px] text-slate-400 italic">Doit être inférieur à l'objectif.</p>
         </div>
       </div>
 
       <div class="space-y-1.5">
         <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Deadline (Optional)</label>
-        <input type="date" [(ngModel)]="newGoal.deadline" name="deadline"
+        <input type="date" [(ngModel)]="newGoal.deadline" [min]="today" name="deadline"
           class="w-full rounded-lg border-slate-200 px-3 py-2 text-sm focus:border-indigo-500 focus:ring-indigo-500">
       </div>
 
