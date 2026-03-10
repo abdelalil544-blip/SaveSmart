@@ -53,4 +53,8 @@ export class LoginPage {
       }
     });
   }
+
+  loginWithGoogle(): void {
+    window.location.href = this.authService.getGoogleLoginUrl();
+  }
 }

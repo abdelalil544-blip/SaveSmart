@@ -50,5 +50,10 @@ export const routes: Routes = [
   {
     path: 'register',
     loadComponent: () => import('./pages/auth/register/register.page').then((m) => m.RegisterPage)
+  },
+  {
+    path: 'oauth2/redirect',
+    loadComponent: () =>
+      import('./pages/auth/oauth2-redirect/oauth2-redirect.page').then((m) => m.OAuth2RedirectPage)
   }
 ];

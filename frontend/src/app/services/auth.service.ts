@@ -28,4 +28,8 @@ export class AuthService {
     const payload: RefreshTokenRequest = { refreshToken };
     return this.http.post<void>(`${this.api}/api/auth/logout`, payload);
   }
+
+  getGoogleLoginUrl(): string {
+    return `${this.api}/oauth2/authorization/google`;
+  }
 }
