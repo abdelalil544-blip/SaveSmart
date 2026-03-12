@@ -33,6 +33,7 @@ export class DashboardPage implements OnInit {
   isSaving = signal(false);
   errorMessage = signal<string | null>(null);
   successMessage = signal<string | null>(null);
+  showTransactionModal = signal(false);
 
   // Period
   selectedMonth = signal(new Date().getMonth() + 1);
@@ -145,6 +146,7 @@ export class DashboardPage implements OnInit {
       next: () => {
         this.successMessage.set('Entry recorded.');
         this.resetForm();
+        this.closeTransactionModal();
         this.loadDashboard();
         setTimeout(() => this.successMessage.set(null), 5000);
       },
@@ -160,8 +162,26 @@ export class DashboardPage implements OnInit {
     this.successMessage.set(null);
   }
 
+  openTransactionModal() {
+    this.transactionForm = {
+      ...this.transactionForm,
+      date: new Date().toISOString().split('T')[0]
+    };
+    this.showTransactionModal.set(true);
+  }
+
+  closeTransactionModal() {
+    this.showTransactionModal.set(false);
+  }
+
   private resetForm() {
-    this.transactionForm = { ...this.transactionForm, amount: null, categoryId: '', description: '' };
+    this.transactionForm = {
+      ...this.transactionForm,
+      amount: null,
+      categoryId: '',
+      description: '',
+      date: new Date().toISOString().split('T')[0]
+    };
   }
 
   resetFilters() {
@@ -175,5 +195,4 @@ export class DashboardPage implements OnInit {
     return Math.min(100, Math.round((item.spent / item.limit) * 100));
   }
 }
-
 

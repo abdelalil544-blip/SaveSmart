@@ -1,186 +1,242 @@
 <div class="relative space-y-10 pb-10">
-  <!-- Decorative background elements -->
-  <div class="absolute -top-24 -right-24 h-96 w-96 rounded-full bg-indigo-500/5 blur-3xl"></div>
-  <div class="absolute top-1/2 -left-24 h-64 w-64 rounded-full bg-purple-500/5 blur-2xl"></div>
 
-  <!-- Header Section -->
+  <!-- Header -->
   <header class="relative flex flex-col justify-between gap-6 sm:flex-row sm:items-end">
-    <div class="space-y-2">
-      <h1 class="saas-heading text-4xl tracking-tight">Financial Command</h1>
-      <p class="text-sm font-medium text-slate-500 flex items-center gap-2">
-        <span class="h-1.5 w-1.5 rounded-full bg-indigo-500 animate-pulse"></span>
-        Monitor your capital efficiency and resource distribution.
+    <div class="space-y-1.5">
+      <h1 class="text-2xl font-black tracking-tight" style="color:#0f1e3c">Financial Command</h1>
+      <p class="flex items-center gap-2 text-xs font-medium uppercase tracking-widest text-slate-400">
+        <span class="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+        Monitor your capital efficiency and resource distribution
       </p>
     </div>
 
-    <div class="flex items-center gap-3">
-      <div
-        class="flex items-center rounded-2xl border border-slate-200/60 bg-white/80 p-1.5 shadow-sm backdrop-blur-md">
-        <select
-          class="border-none bg-transparent px-4 py-2 text-xs font-bold text-slate-700 focus:ring-0 cursor-pointer"
-          [ngModel]="selectedMonth()" (ngModelChange)="selectedMonth.set($event); loadDashboard()">
+    <div class="flex items-center gap-2">
+      <!-- Period selector -->
+      <div class="inline-flex items-center gap-2 rounded-xl border border-blue-100 bg-blue-50 px-4 py-2.5 shadow-sm">
+        <span class="text-[10px] font-black uppercase tracking-widest text-blue-400">Period</span>
+        <div class="h-3 w-px bg-blue-200"></div>
+        <select class="bg-transparent text-xs font-bold text-blue-900 outline-none cursor-pointer"
+                [ngModel]="selectedMonth()" (ngModelChange)="selectedMonth.set($event); loadDashboard()">
           @for (month of months; track month.value) {
           <option [ngValue]="month.value">{{ month.label }}</option>
           }
         </select>
-        <div class="h-5 w-px bg-slate-200 mx-1"></div>
-        <select
-          class="border-none bg-transparent px-4 py-2 text-xs font-bold text-slate-700 focus:ring-0 cursor-pointer"
-          [ngModel]="selectedYear()" (ngModelChange)="selectedYear.set($event); loadDashboard()">
+        <select class="bg-transparent text-xs font-bold text-blue-900 outline-none cursor-pointer"
+                [ngModel]="selectedYear()" (ngModelChange)="selectedYear.set($event); loadDashboard()">
           @for (year of years(); track year) {
           <option [ngValue]="year">{{ year }}</option>
           }
         </select>
       </div>
+      <!-- Reset -->
       <button (click)="resetFilters()"
-        class="flex h-11 items-center gap-2 rounded-2xl border border-slate-200/60 bg-white px-5 text-xs font-bold text-slate-700 transition-all hover:bg-slate-50 hover:border-slate-300 shadow-sm active:scale-95">
-        🔄 Initialiser
+              class="flex h-10 items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-xs font-black uppercase tracking-widest text-slate-500 shadow-sm transition hover:bg-slate-50 hover:border-slate-300 active:scale-95">
+        ↺ Reset
       </button>
     </div>
   </header>
 
+  <!-- Error -->
   @if (errorMessage()) {
-  <div
-    class="relative rounded-2xl border border-rose-200 bg-rose-50/50 p-4 pr-12 text-sm font-semibold text-rose-800 backdrop-blur-md animate-in fade-in slide-in-from-top-4 duration-300">
-    <span class="mr-2">⚠️</span> {{ errorMessage() }}
-    <button (click)="clearMessages()"
-      class="absolute right-4 top-1/2 -translate-y-1/2 text-rose-400 hover:text-rose-600 transition-colors">
-      ✕
-    </button>
+  <div class="flex items-center justify-between rounded-xl border border-rose-100 bg-rose-50 px-5 py-3 text-sm font-semibold text-rose-700">
+    <span class="flex items-center gap-2"><span class="text-rose-400">⚠</span> {{ errorMessage() }}</span>
+    <button (click)="clearMessages()" class="ml-4 text-rose-300 hover:text-rose-600 text-base leading-none transition">✕</button>
   </div>
   }
 
   <!-- Stats Grid -->
-  <section class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+  <section class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
     @for (stat of stats(); track stat.label) {
-    <div class="glass-card hover-elevate group p-7">
+    <div class="group overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-all hover:border-blue-100 hover:shadow-md">
       <div class="flex items-center justify-between">
-        <p
-          class="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 group-hover:text-indigo-500 transition-colors">
-          {{ stat.label }}</p>
-        <div
-          class="h-10 w-10 rounded-xl flex items-center justify-center transition-all duration-300 group-hover:scale-110"
-          [class.bg-emerald-500/10]="stat.type === 'income'" [class.bg-rose-500/10]="stat.type === 'expense'"
-          [class.bg-indigo-500/10]="stat.type !== 'income' && stat.type !== 'expense'">
-          <span class="text-lg" [class.text-emerald-600]="stat.type === 'income'"
-            [class.text-rose-600]="stat.type === 'expense'"
-            [class.text-indigo-600]="stat.type !== 'income' && stat.type !== 'expense'">
+        <p class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 transition-colors group-hover:text-blue-500">
+          {{ stat.label }}
+        </p>
+        <div class="flex h-9 w-9 items-center justify-center rounded-xl transition-all duration-300 group-hover:scale-110"
+             [class.bg-emerald-50]="stat.type === 'income'"
+             [class.bg-rose-50]="stat.type === 'expense'"
+             [class.bg-blue-50]="stat.type !== 'income' && stat.type !== 'expense'">
+          <span class="text-base"
+                [class.text-emerald-600]="stat.type === 'income'"
+                [class.text-rose-500]="stat.type === 'expense'"
+                [class.text-blue-600]="stat.type !== 'income' && stat.type !== 'expense'">
             {{ stat.type === 'income' ? '↗' : stat.type === 'expense' ? '↘' : '⚖' }}
           </span>
         </div>
       </div>
-      <div class="mt-4 flex items-baseline gap-2">
-        <h2 class="saas-heading text-3xl">{{ stat.value | currency:'EUR':'symbol':'1.0-0' }}</h2>
-      </div>
-      <div class="mt-4 pt-4 border-t border-slate-50 flex items-center justify-between">
+      <h2 class="mt-4 text-2xl font-black tabular-nums" style="color:#0f1e3c">
+        {{ stat.value | currency:'EUR':'symbol':'1.0-0' }}
+      </h2>
+      <div class="mt-4 flex items-center justify-between border-t border-slate-50 pt-4">
         <span class="text-[10px] font-bold text-slate-400">{{ stat.delta }}</span>
-        <span class="h-1 w-12 rounded-full bg-slate-100 overflow-hidden">
-          <span class="block h-full bg-slate-300 transition-all duration-1000 w-1/2"></span>
-        </span>
+        <div class="h-1 w-12 overflow-hidden rounded-full bg-slate-100">
+          <div class="h-full w-1/2 rounded-full"
+               [class.bg-emerald-400]="stat.type === 'income'"
+               [class.bg-rose-400]="stat.type === 'expense'"
+               [class.bg-blue-400]="stat.type !== 'income' && stat.type !== 'expense'">
+          </div>
+        </div>
       </div>
     </div>
     }
   </section>
 
   <!-- Quick Entry Panel -->
-  <section class="glass-card overflow-hidden shadow-indigo-100/20">
-    <div class="border-b border-slate-100/60 bg-slate-50/30 px-8 py-5">
-      <div class="flex items-center justify-between">
-        <div class="flex items-center gap-3">
-          <div class="h-2 w-2 rounded-full bg-indigo-600"></div>
-          <h3 class="saas-heading text-base">Quick Ledger Entry</h3>
-        </div>
-        <a routerLink="/app/categories"
-          class="text-xs font-bold text-indigo-600 hover:text-indigo-700 transition-colors">Configure Domains →</a>
+  <section class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+    <div class="flex items-center justify-between border-b border-blue-900/20 px-6 py-4" style="background:linear-gradient(to right,#0f1e3c,#1a3260)">
+      <div class="flex items-center gap-2.5">
+        <span class="h-2 w-2 rounded-full bg-blue-400"></span>
+        <h3 class="text-xs font-black uppercase tracking-widest text-blue-100">Quick Ledger Entry</h3>
       </div>
+      <a routerLink="/app/categories"
+         class="text-[10px] font-black uppercase tracking-widest text-blue-300 transition hover:text-white">
+        Configure Domains →
+      </a>
     </div>
-    <div class="p-8">
-      <form class="flex flex-col gap-6 lg:flex-row lg:items-end" (ngSubmit)="submitTransaction()">
-        <div class="flex-1 space-y-2">
-          <label class="text-[10px] font-extrabold uppercase tracking-widest text-slate-500 ml-1">Classification</label>
-          <select class="premium-input w-full appearance-none cursor-pointer" [(ngModel)]="transactionForm.type"
-            name="type">
-            <option value="EXPENSE">Operational Expense</option>
-            <option value="INCOME">Capital Inflow</option>
-          </select>
-        </div>
-        <div class="flex-1 space-y-2">
-          <label class="text-[10px] font-extrabold uppercase tracking-widest text-slate-500 ml-1">Value (EUR)</label>
-          <input type="number" class="premium-input w-full" placeholder="0.00" name="amount"
-            [(ngModel)]="transactionForm.amount" />
-        </div>
-        <div class="flex-1 space-y-2">
-          <label class="text-[10px] font-extrabold uppercase tracking-widest text-slate-500 ml-1">Reference
-            Domain</label>
-          <select class="premium-input w-full appearance-none cursor-pointer" [(ngModel)]="transactionForm.categoryId"
-            name="categoryId">
-            <option value="">Select Domain...</option>
-            @for (cat of filteredCategories; track cat.id) {
-            <option [value]="cat.id">{{ cat.name }}</option>
-            }
-          </select>
-        </div>
-        <button type="submit" [disabled]="isSaving()"
-          class="h-12 rounded-xl premium-gradient px-10 text-sm font-bold text-white transition-all hover:shadow-lg hover:shadow-indigo-500/25 active:scale-95 disabled:opacity-50 lg:w-auto">
-          {{ isSaving() ? 'Recording...' : 'Execute Entry' }}
+
+    <div class="p-6">      <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <p class="text-xs font-semibold text-slate-500">Record income or expense with a custom date.</p>
+        <button type="button" (click)="openTransactionModal()"
+                class="h-11 rounded-xl px-6 text-xs font-black uppercase tracking-widest text-white shadow-sm transition hover:opacity-90 active:scale-95"
+                style="background:linear-gradient(135deg,#0f1e3c,#1e40af)">
+          New Entry
         </button>
-      </form>
-      @if (successMessage()) {
-      <p class="mt-4 text-xs font-bold text-emerald-600 flex items-center gap-2 animate-in fade-in duration-500">
-        <span class="h-5 w-5 rounded-full bg-emerald-100 flex items-center justify-center">✓</span>
+      </div>
+@if (successMessage()) {
+      <div class="mt-4 flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-emerald-600">
+        <span class="flex h-5 w-5 items-center justify-center rounded-full bg-emerald-100 text-emerald-600">✓</span>
         {{ successMessage() }}
-      </p>
+      </div>
       }
     </div>
   </section>
 
-  <!-- Analysis Grid -->
-  <section class="grid gap-8 lg:grid-cols-3">
-    <!-- Category Analysis -->
-    <div class="glass-card lg:col-span-2 group">
-      <div class="border-b border-slate-100/60 px-8 py-5 flex items-center justify-between">
-        <h3 class="saas-heading text-base">Allocation Performance</h3>
-        <span
-          class="text-[10px] font-bold text-slate-400 group-hover:text-indigo-500 transition-colors uppercase tracking-widest">Efficiency
-          metrics</span>
+  <!-- Transaction Modal -->
+  @if (showTransactionModal()) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm">
+    <div class="w-full max-w-lg overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl">
+      <div class="flex items-center justify-between border-b border-slate-100 px-6 py-4" style="background:linear-gradient(to right,#0f1e3c,#1a3260)">
+        <div>
+          <h2 class="text-sm font-black uppercase tracking-widest text-blue-100">New Ledger Entry</h2>
+          <p class="mt-0.5 text-[10px] text-blue-300">Pick the exact date for this transaction</p>
+        </div>
+        <button type="button" (click)="closeTransactionModal()" class="text-blue-200 hover:text-white text-base leading-none">Ã—</button>
       </div>
-      <div class="p-8">
+
+      <form class="p-6 space-y-4" (ngSubmit)="submitTransaction()">
+        <div class="grid gap-3 sm:grid-cols-2">
+          <div class="space-y-1.5">
+            <label class="text-[10px] font-black uppercase tracking-widest text-slate-400">Classification</label>
+            <select
+              class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm font-semibold text-slate-700 outline-none transition focus:border-blue-300 focus:bg-white focus:ring-2 focus:ring-blue-50"
+              [(ngModel)]="transactionForm.type" name="type">
+              <option value="EXPENSE">Operational Expense</option>
+              <option value="INCOME">Capital Inflow</option>
+            </select>
+          </div>
+
+          <div class="space-y-1.5">
+            <label class="text-[10px] font-black uppercase tracking-widest text-slate-400">Date</label>
+            <input type="date"
+                   class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm font-semibold text-slate-700 outline-none transition focus:border-blue-300 focus:bg-white focus:ring-2 focus:ring-blue-50"
+                   name="date" [(ngModel)]="transactionForm.date" />
+          </div>
+        </div>
+
+        <div class="grid gap-3 sm:grid-cols-2">
+          <div class="space-y-1.5">
+            <label class="text-[10px] font-black uppercase tracking-widest text-slate-400">Value (EUR)</label>
+            <input type="number"
+                   class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm font-semibold text-slate-800 placeholder-slate-300 outline-none transition focus:border-blue-300 focus:bg-white focus:ring-2 focus:ring-blue-50"
+                   placeholder="0.00" name="amount" [(ngModel)]="transactionForm.amount" />
+          </div>
+
+          <div class="space-y-1.5">
+            <label class="text-[10px] font-black uppercase tracking-widest text-slate-400">Reference Domain</label>
+            <select
+              class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm font-semibold text-slate-700 outline-none transition focus:border-blue-300 focus:bg-white focus:ring-2 focus:ring-blue-50"
+              [(ngModel)]="transactionForm.categoryId" name="categoryId">
+              <option value="">Select Domainâ€¦</option>
+              @for (cat of filteredCategories; track cat.id) {
+              <option [value]="cat.id">{{ cat.name }}</option>
+              }
+            </select>
+          </div>
+        </div>
+
+        <div class="space-y-1.5">
+          <label class="text-[10px] font-black uppercase tracking-widest text-slate-400">Description (Optional)</label>
+          <input type="text"
+                 class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm font-semibold text-slate-800 placeholder-slate-300 outline-none transition focus:border-blue-300 focus:bg-white focus:ring-2 focus:ring-blue-50"
+                 placeholder="Note about this transaction" name="description" [(ngModel)]="transactionForm.description" />
+        </div>
+
+        <div class="flex gap-3 pt-2">
+          <button type="button" (click)="closeTransactionModal()"
+                  class="flex-1 rounded-xl border border-slate-200 py-2.5 text-[10px] font-black uppercase tracking-widest text-slate-500 transition hover:bg-slate-50">
+            Cancel
+          </button>
+          <button type="submit" [disabled]="isSaving()"
+                  class="flex-1 rounded-xl py-2.5 text-[10px] font-black uppercase tracking-widest text-white shadow-sm transition disabled:opacity-40"
+                  style="background:linear-gradient(135deg,#0f1e3c,#1e40af)">
+            {{ isSaving() ? 'Recordingâ€¦' : 'Execute Entry' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+  }
+
+  <!-- Analysis Grid -->
+  <section class="grid gap-6 lg:grid-cols-3">
+
+    <!-- Allocation Performance -->
+    <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm lg:col-span-2">
+      <div class="flex items-center justify-between border-b border-blue-900/20 px-6 py-4" style="background:linear-gradient(to right,#0f1e3c,#1a3260)">
+        <h3 class="text-xs font-black uppercase tracking-widest text-blue-100">Allocation Performance</h3>
+        <span class="text-[10px] font-black uppercase tracking-widest text-blue-400">Efficiency metrics</span>
+      </div>
+
+      <div class="p-6">
         @if (isLoading()) {
-        <div class="space-y-8">
-          <div class="h-14 rounded-2xl bg-slate-50 animate-pulse"></div>
-          <div class="h-14 rounded-2xl bg-slate-50 animate-pulse"></div>
-          <div class="h-14 rounded-2xl bg-slate-50 animate-pulse"></div>
+        <div class="space-y-4">
+          <div class="h-14 animate-pulse rounded-xl bg-slate-50"></div>
+          <div class="h-14 animate-pulse rounded-xl bg-slate-50"></div>
+          <div class="h-14 animate-pulse rounded-xl bg-slate-50"></div>
         </div>
         } @else if (!categories().length) {
         <div class="py-16 text-center">
-          <div class="text-4xl mb-4">📊</div>
-          <p class="text-sm font-medium text-slate-400">No allocation data available for this period.</p>
+          <p class="text-xs font-semibold uppercase tracking-widest text-slate-300">No allocation data for this period</p>
         </div>
         } @else {
-        <div class="grid gap-8 sm:grid-cols-2">
+        <div class="grid gap-5 sm:grid-cols-2">
           @for (item of categories(); track item.name) {
-          <div class="space-y-4 p-4 rounded-2xl transition-all duration-300 hover:bg-slate-50/50">
+          <div class="space-y-3 rounded-xl border border-slate-100 p-4 transition hover:border-blue-100 hover:bg-blue-50/20">
             <div class="flex items-center justify-between">
-              <div class="flex items-center gap-3">
-                <div class="h-3 w-3 rounded-full" [style.background]="item.color"></div>
-                <span class="text-xs font-bold text-slate-700 uppercase tracking-tight">{{ item.name }}</span>
+              <div class="flex items-center gap-2.5">
+                <div class="h-2.5 w-2.5 rounded-full shrink-0" [style.background]="item.color"></div>
+                <span class="text-xs font-bold uppercase tracking-tight" style="color:#0f1e3c">{{ item.name }}</span>
               </div>
-              <span class="text-[10px] font-black text-slate-400">{{ getPercent(item) }}%</span>
+              <span class="text-[10px] font-black tabular-nums text-slate-400">{{ getPercent(item) }}%</span>
             </div>
-            <div class="h-2 w-full overflow-hidden rounded-full bg-slate-100">
-              <div class="h-full rounded-full transition-all duration-1000 ease-out" [style.width.%]="getPercent(item)"
-                [style.background]="item.hasBudget && item.spent > item.limit ? '#ef4444' : item.color"></div>
+
+            <div class="h-1.5 w-full overflow-hidden rounded-full bg-slate-100">
+              <div class="h-full rounded-full transition-all duration-1000 ease-out"
+                   [style.width.%]="getPercent(item)"
+                   [style.background]="item.hasBudget && item.spent > item.limit ? '#ef4444' : item.color">
+              </div>
             </div>
+
             <div class="flex justify-between text-[10px] font-bold">
-              <span [class.text-rose-600]="item.hasBudget && item.spent > item.limit" class="text-slate-500">
+              <span [class.text-rose-500]="item.hasBudget && item.spent > item.limit" [class.text-slate-500]="!(item.hasBudget && item.spent > item.limit)">
                 {{ item.spent | currency:'EUR':'symbol':'1.0-0' }} spent
               </span>
-              <span class="text-slate-400">/ {{ item.limit | currency:'EUR':'symbol':'1.0-0' }} limit</span>
+              <span class="text-slate-400">/ {{ item.limit | currency:'EUR':'symbol':'1.0-0' }}</span>
             </div>
+
             @if (item.hasBudget && item.spent > item.limit) {
-            <div
-              class="flex items-center gap-1.5 rounded-lg bg-rose-50 px-2 py-1 text-[9px] font-black uppercase tracking-tighter text-rose-600 animate-in fade-in slide-in-from-left-2">
-              <span>⚠️</span> Budget Exceeded by {{ (item.spent - item.limit) | currency:'EUR':'symbol':'1.0-0' }}
+            <div class="flex items-center gap-1.5 rounded-lg bg-rose-50 px-3 py-1.5 text-[9px] font-black uppercase tracking-wider text-rose-600 ring-1 ring-rose-100">
+              ⚠ Exceeded by {{ (item.spent - item.limit) | currency:'EUR':'symbol':'1.0-0' }}
             </div>
             }
           </div>
@@ -191,33 +247,35 @@
     </div>
 
     <!-- Momentum Indicators -->
-    <div class="glass-card">
-      <div class="border-b border-slate-100/60 px-8 py-5">
-        <h3 class="saas-heading text-base">Momentum Indicators</h3>
+    <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+      <div class="border-b border-blue-900/20 px-6 py-4" style="background:linear-gradient(to right,#0f1e3c,#1a3260)">
+        <h3 class="text-xs font-black uppercase tracking-widest text-blue-100">Momentum Indicators</h3>
       </div>
-      <div class="p-8 space-y-6">
+
+      <div class="p-6 space-y-3">
         @for (highlight of highlights(); track highlight.title) {
-        <div
-          class="flex items-center gap-5 rounded-2xl bg-slate-50/50 p-5 transition-all duration-300 hover:bg-white hover:shadow-md hover:shadow-slate-200/50">
-          <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-white shadow-sm text-xl">
+        <div class="flex items-center gap-4 rounded-xl border border-slate-100 bg-slate-50/50 p-4 transition hover:border-blue-100 hover:bg-blue-50/20 hover:shadow-sm">
+          <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-slate-200 bg-white shadow-sm text-lg">
             {{ $index === 0 ? '📈' : $index === 1 ? '🎯' : '⏳' }}
           </div>
-          <div class="space-y-1">
-            <p class="text-xs font-extrabold text-slate-900 uppercase tracking-tight">{{ highlight.title }}</p>
-            <p class="text-[10px] font-bold text-indigo-500 uppercase tracking-widest">{{ highlight.detail }}</p>
+          <div class="space-y-0.5 min-w-0">
+            <p class="text-xs font-black uppercase tracking-tight truncate" style="color:#0f1e3c">{{ highlight.title }}</p>
+            <p class="text-[10px] font-bold uppercase tracking-widest text-blue-400 truncate">{{ highlight.detail }}</p>
           </div>
         </div>
         }
 
-        <!-- Premium call to action -->
-        <div class="mt-8 rounded-2xl accent-gradient p-6 text-white shadow-lg shadow-purple-500/20">
-          <p class="text-[10px] font-black uppercase tracking-widest opacity-80">Pro Optimization</p>
-          <p class="mt-2 text-sm font-bold">Optimize your savings with AI-driven insights.</p>
-          <button
-            class="mt-4 w-full rounded-xl bg-white/20 py-2.5 text-xs font-black uppercase tracking-widest hover:bg-white/30 transition-colors">Analyze
-            now</button>
+        <!-- CTA -->
+        <div class="mt-2 overflow-hidden rounded-xl border border-blue-900/30 p-5 text-white shadow-sm" style="background:linear-gradient(135deg,#0f1e3c,#1e40af)">
+          <p class="text-[9px] font-black uppercase tracking-widest text-blue-300">Pro Optimization</p>
+          <p class="mt-1.5 text-sm font-bold text-white leading-snug">Optimize your savings with AI-driven insights.</p>
+          <button class="mt-4 w-full rounded-xl border border-white/20 bg-white/10 py-2.5 text-[10px] font-black uppercase tracking-widest text-white transition hover:bg-white/20">
+            Analyze Now
+          </button>
         </div>
       </div>
     </div>
+
   </section>
 </div>
+
