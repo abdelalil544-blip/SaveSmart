@@ -69,12 +69,45 @@ export class OAuth2RedirectPage implements OnInit {
       return;
     }
 
-    this.tokenService.setTokens(accessToken, refreshToken);
+    const userId = this.extractUserId(accessToken);
+    this.tokenService.setTokens(accessToken, refreshToken, userId);
     this.status.set('success');
     this.router.navigateByUrl('/app/dashboard');
   }
 
   goToLogin(): void {
     this.router.navigateByUrl('/login');
+  }
+
+  private extractUserId(token: string): string | null {
+    try {
+      const parts = token.split('.');
+      if (parts.length < 2) {
+        return null;
+      }
+      const payload = this.decodeBase64Url(parts[1]);
+      if (!payload) {
+        return null;
+      }
+      const data = JSON.parse(payload) as { userId?: string };
+      return data.userId ?? null;
+    } catch {
+      return null;
+    }
+  }
+
+  private decodeBase64Url(input: string): string | null {
+    try {
+      const base64 = input.replace(/-/g, '+').replace(/_/g, '/');
+      const padded = base64 + '='.repeat((4 - (base64.length % 4)) % 4);
+      return decodeURIComponent(
+        atob(padded)
+          .split('')
+          .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+          .join('')
+      );
+    } catch {
+      return null;
+    }
   }
 }
