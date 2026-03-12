@@ -1,6 +1,8 @@
 import { Component, OnInit, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { finalize } from 'rxjs/operators';
+import { AuthService } from '../../services/auth.service';
 import { TokenService } from '../../core/token.service';
 import { UserService } from '../../services/user.service';
 
@@ -11,8 +13,10 @@ import { UserService } from '../../services/user.service';
   templateUrl: './app-shell.page.html'
 })
 export class AppShellPage implements OnInit {
+  private authService = inject(AuthService);
   private tokenService = inject(TokenService);
   private userService = inject(UserService);
+  private router = inject(Router);
 
   userInitials = signal('U');
 
@@ -25,5 +29,28 @@ export class AppShellPage implements OnInit {
         this.userInitials.set((first + last) || 'U');
       });
     }
+  }
+
+  logout() {
+    const refreshToken = this.tokenService.getRefreshToken();
+    if (!refreshToken) {
+      this.tokenService.clear();
+      this.router.navigateByUrl('/login');
+      return;
+    }
+
+    this.authService
+      .logout(refreshToken)
+      .pipe(
+        finalize(() => {
+          this.tokenService.clear();
+          this.router.navigateByUrl('/login');
+        })
+      )
+      .subscribe({
+        error: () => {
+          // Even if logout fails, clear local state and redirect.
+        }
+      });
   }
 }
