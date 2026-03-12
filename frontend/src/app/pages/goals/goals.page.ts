@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { finalize } from 'rxjs/operators';
 import { SavingGoalsService } from '../../services/saving-goals.service';
 import { TokenService } from '../../core/token.service';
-import { SavingGoalResponse, SavingGoalCreate } from '../../models/saving-goals.models';
+import { SavingGoalResponse, SavingGoalCreate, SavingGoalUpdate, GoalStatus } from '../../models/saving-goals.models';
 
 @Component({
   selector: 'app-goals-page',
@@ -25,6 +25,17 @@ export class GoalsPage implements OnInit {
   // Form state
   today = new Date().toISOString().split('T')[0];
   showAddModal = signal(false);
+  showEditModal = signal(false);
+  editGoalId = signal<string | null>(null);
+  editGoal: SavingGoalUpdate = {
+    name: '',
+    targetAmount: 0,
+    currentAmount: 0,
+    deadline: '',
+    description: '',
+    status: 'ACTIVE'
+  };
+  statusOptions: GoalStatus[] = ['ACTIVE', 'COMPLETED', 'CANCELLED'];
   newGoal: SavingGoalCreate = {
     name: '',
     targetAmount: 0,
@@ -76,6 +87,24 @@ export class GoalsPage implements OnInit {
     this.showAddModal.set(false);
   }
 
+  openEditModal(goal: SavingGoalResponse) {
+    this.editGoalId.set(goal.id);
+    this.editGoal = {
+      name: goal.name,
+      targetAmount: goal.targetAmount,
+      currentAmount: goal.currentAmount,
+      deadline: goal.deadline || '',
+      description: goal.description || '',
+      status: goal.status
+    };
+    this.showEditModal.set(true);
+  }
+
+  closeEditModal() {
+    this.showEditModal.set(false);
+    this.editGoalId.set(null);
+  }
+
   createGoal() {
     const userId = this.tokenService.getUserId();
     if (!userId || !this.newGoal.name || this.newGoal.targetAmount <= 0) {
@@ -110,22 +139,34 @@ export class GoalsPage implements OnInit {
   }
 
   updateAllocation(goal: SavingGoalResponse) {
-    const newAmountStr = prompt(`Enter new amount for ${goal.name}:`, goal.currentAmount.toString());
-    if (newAmountStr === null) return;
+    this.openEditModal(goal);
+  }
 
-    const newAmount = parseFloat(newAmountStr);
-    if (isNaN(newAmount)) return;
+  updateGoal() {
+    const goalId = this.editGoalId();
+    if (!goalId || !this.editGoal.name || (this.editGoal.targetAmount || 0) <= 0) {
+      this.errorMessage.set('Please fill in all required fields.');
+      return;
+    }
 
-    if (newAmount >= goal.targetAmount) {
+    const currentAmount = this.editGoal.currentAmount || 0;
+    const targetAmount = this.editGoal.targetAmount || 0;
+    if (currentAmount >= targetAmount) {
       this.errorMessage.set('Le montant économisé doit être strictement inférieur à l\'objectif.');
       setTimeout(() => this.errorMessage.set(null), 5000);
       return;
     }
 
-    this.goalsService.update(goal.id, { currentAmount: newAmount }).subscribe({
-      next: () => this.loadGoals(),
-      error: () => this.errorMessage.set('Failed to update allocation.')
-    });
+    this.isSaving.set(true);
+    this.goalsService.update(goalId, this.editGoal)
+      .pipe(finalize(() => this.isSaving.set(false)))
+      .subscribe({
+        next: () => {
+          this.loadGoals();
+          this.closeEditModal();
+        },
+        error: () => this.errorMessage.set('Failed to update goal.')
+      });
   }
 
   getStatusClass(status: string): string {
@@ -141,3 +182,4 @@ export class GoalsPage implements OnInit {
     return new Date(dateStr).toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
   }
 }
+
