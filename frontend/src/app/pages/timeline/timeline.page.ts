@@ -1,20 +1,36 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { TransactionsService } from '../../services/transactions.service';
+import { CategoriesService } from '../../services/categories.service';
+import { ExpensesService } from '../../services/expenses.service';
+import { IncomesService } from '../../services/incomes.service';
 import { TokenService } from '../../core/token.service';
 import { TransactionResponse } from '../../models/transactions.models';
+import { CategoryResponse } from '../../models/categories.models';
 import { finalize } from 'rxjs/operators';
 
 @Component({
   selector: 'app-timeline-page',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './timeline.page.html'
 })
 export class TimelinePage implements OnInit {
   entries = signal<TransactionResponse[]>([]);
   isLoading = signal(false);
+  isSaving = signal(false);
   errorMessage = signal<string | null>(null);
+  successMessage = signal<string | null>(null);
+  showTransactionModal = signal(false);
+
+  // Transaction Form
+  transactionForm = { type: 'EXPENSE' as 'INCOME' | 'EXPENSE', amount: null as number | null, categoryId: '', date: new Date().toISOString().split('T')[0], description: '' };
+  rawCategories = signal<CategoryResponse[]>([]);
+
+  get filteredCategories() {
+    return this.rawCategories().filter(c => c.type === this.transactionForm.type);
+  }
 
   // Pagination
   currentPage = signal(0);
@@ -24,11 +40,15 @@ export class TimelinePage implements OnInit {
 
   constructor(
     private transactionsService: TransactionsService,
+    private categoriesService: CategoriesService,
+    private expensesService: ExpensesService,
+    private incomesService: IncomesService,
     private tokenService: TokenService
   ) { }
 
   ngOnInit(): void {
     this.loadTransactions();
+    this.loadCategories();
   }
 
   loadTransactions(page: number = 0): void {
@@ -56,6 +76,68 @@ export class TimelinePage implements OnInit {
           this.errorMessage.set('Failed to load transaction history.');
         }
       });
+  }
+
+  loadCategories(): void {
+    const userId = this.tokenService.getUserId();
+    if (!userId) return;
+
+    this.categoriesService.getByUser(userId).subscribe({
+      next: (data) => this.rawCategories.set(data),
+      error: () => this.errorMessage.set('Failed to load categories.')
+    });
+  }
+
+  submitTransaction() {
+    const userId = this.tokenService.getUserId();
+    if (!userId || !this.transactionForm.amount || !this.transactionForm.categoryId) {
+      this.errorMessage.set('All fields are mandatory.');
+      return;
+    }
+
+    this.isSaving.set(true);
+    const payload = { ...this.transactionForm, amount: this.transactionForm.amount as number };
+    const service = this.transactionForm.type === 'INCOME' ? this.incomesService : this.expensesService;
+    service.create(userId, payload).pipe(finalize(() => this.isSaving.set(false))).subscribe({
+      next: () => {
+        this.successMessage.set('Entry recorded.');
+        this.resetForm();
+        this.closeTransactionModal();
+        this.loadTransactions(0);
+        setTimeout(() => this.successMessage.set(null), 5000);
+      },
+      error: () => {
+        this.errorMessage.set('Failed to save entry.');
+        setTimeout(() => this.errorMessage.set(null), 5000);
+      }
+    });
+  }
+
+  openTransactionModal() {
+    this.transactionForm = {
+      ...this.transactionForm,
+      date: new Date().toISOString().split('T')[0]
+    };
+    this.showTransactionModal.set(true);
+  }
+
+  closeTransactionModal() {
+    this.showTransactionModal.set(false);
+  }
+
+  clearMessages() {
+    this.errorMessage.set(null);
+    this.successMessage.set(null);
+  }
+
+  private resetForm() {
+    this.transactionForm = {
+      ...this.transactionForm,
+      amount: null,
+      categoryId: '',
+      description: '',
+      date: new Date().toISOString().split('T')[0]
+    };
   }
 
   nextPage(): void {

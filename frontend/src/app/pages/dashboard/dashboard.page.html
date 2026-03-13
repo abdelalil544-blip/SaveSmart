@@ -79,115 +79,7 @@
       </div>
     </div>
     }
-  </section>
-
-  <!-- Quick Entry Panel -->
-  <section class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-    <div class="flex items-center justify-between border-b border-blue-900/20 px-6 py-4" style="background:linear-gradient(to right,#0f1e3c,#1a3260)">
-      <div class="flex items-center gap-2.5">
-        <span class="h-2 w-2 rounded-full bg-blue-400"></span>
-        <h3 class="text-xs font-black uppercase tracking-widest text-blue-100">Quick Ledger Entry</h3>
-      </div>
-      <a routerLink="/app/categories"
-         class="text-[10px] font-black uppercase tracking-widest text-blue-300 transition hover:text-white">
-        Configure Domains →
-      </a>
-    </div>
-
-    <div class="p-6">      <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <p class="text-xs font-semibold text-slate-500">Record income or expense with a custom date.</p>
-        <button type="button" (click)="openTransactionModal()"
-                class="h-11 rounded-xl px-6 text-xs font-black uppercase tracking-widest text-white shadow-sm transition hover:opacity-90 active:scale-95"
-                style="background:linear-gradient(135deg,#0f1e3c,#1e40af)">
-          New Entry
-        </button>
-      </div>
-@if (successMessage()) {
-      <div class="mt-4 flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-emerald-600">
-        <span class="flex h-5 w-5 items-center justify-center rounded-full bg-emerald-100 text-emerald-600">✓</span>
-        {{ successMessage() }}
-      </div>
-      }
-    </div>
-  </section>
-
-  <!-- Transaction Modal -->
-  @if (showTransactionModal()) {
-  <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm">
-    <div class="w-full max-w-lg overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl">
-      <div class="flex items-center justify-between border-b border-slate-100 px-6 py-4" style="background:linear-gradient(to right,#0f1e3c,#1a3260)">
-        <div>
-          <h2 class="text-sm font-black uppercase tracking-widest text-blue-100">New Ledger Entry</h2>
-          <p class="mt-0.5 text-[10px] text-blue-300">Pick the exact date for this transaction</p>
-        </div>
-        <button type="button" (click)="closeTransactionModal()" class="text-blue-200 hover:text-white text-base leading-none">Ã—</button>
-      </div>
-
-      <form class="p-6 space-y-4" (ngSubmit)="submitTransaction()">
-        <div class="grid gap-3 sm:grid-cols-2">
-          <div class="space-y-1.5">
-            <label class="text-[10px] font-black uppercase tracking-widest text-slate-400">Classification</label>
-            <select
-              class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm font-semibold text-slate-700 outline-none transition focus:border-blue-300 focus:bg-white focus:ring-2 focus:ring-blue-50"
-              [(ngModel)]="transactionForm.type" name="type">
-              <option value="EXPENSE">Operational Expense</option>
-              <option value="INCOME">Capital Inflow</option>
-            </select>
-          </div>
-
-          <div class="space-y-1.5">
-            <label class="text-[10px] font-black uppercase tracking-widest text-slate-400">Date</label>
-            <input type="date"
-                   class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm font-semibold text-slate-700 outline-none transition focus:border-blue-300 focus:bg-white focus:ring-2 focus:ring-blue-50"
-                   name="date" [(ngModel)]="transactionForm.date" />
-          </div>
-        </div>
-
-        <div class="grid gap-3 sm:grid-cols-2">
-          <div class="space-y-1.5">
-            <label class="text-[10px] font-black uppercase tracking-widest text-slate-400">Value (EUR)</label>
-            <input type="number"
-                   class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm font-semibold text-slate-800 placeholder-slate-300 outline-none transition focus:border-blue-300 focus:bg-white focus:ring-2 focus:ring-blue-50"
-                   placeholder="0.00" name="amount" [(ngModel)]="transactionForm.amount" />
-          </div>
-
-          <div class="space-y-1.5">
-            <label class="text-[10px] font-black uppercase tracking-widest text-slate-400">Reference Domain</label>
-            <select
-              class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm font-semibold text-slate-700 outline-none transition focus:border-blue-300 focus:bg-white focus:ring-2 focus:ring-blue-50"
-              [(ngModel)]="transactionForm.categoryId" name="categoryId">
-              <option value="">Select Domainâ€¦</option>
-              @for (cat of filteredCategories; track cat.id) {
-              <option [value]="cat.id">{{ cat.name }}</option>
-              }
-            </select>
-          </div>
-        </div>
-
-        <div class="space-y-1.5">
-          <label class="text-[10px] font-black uppercase tracking-widest text-slate-400">Description (Optional)</label>
-          <input type="text"
-                 class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm font-semibold text-slate-800 placeholder-slate-300 outline-none transition focus:border-blue-300 focus:bg-white focus:ring-2 focus:ring-blue-50"
-                 placeholder="Note about this transaction" name="description" [(ngModel)]="transactionForm.description" />
-        </div>
-
-        <div class="flex gap-3 pt-2">
-          <button type="button" (click)="closeTransactionModal()"
-                  class="flex-1 rounded-xl border border-slate-200 py-2.5 text-[10px] font-black uppercase tracking-widest text-slate-500 transition hover:bg-slate-50">
-            Cancel
-          </button>
-          <button type="submit" [disabled]="isSaving()"
-                  class="flex-1 rounded-xl py-2.5 text-[10px] font-black uppercase tracking-widest text-white shadow-sm transition disabled:opacity-40"
-                  style="background:linear-gradient(135deg,#0f1e3c,#1e40af)">
-            {{ isSaving() ? 'Recordingâ€¦' : 'Execute Entry' }}
-          </button>
-        </div>
-      </form>
-    </div>
-  </div>
-  }
-
-  <!-- Analysis Grid -->
+  </section>  <!-- Analysis Grid -->
   <section class="grid gap-6 lg:grid-cols-3">
 
     <!-- Allocation Performance -->
@@ -278,4 +170,5 @@
 
   </section>
 </div>
+
 
