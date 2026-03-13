@@ -9,7 +9,9 @@ import { CategoriesService } from '../../services/categories.service';
 import { ExpensesService } from '../../services/expenses.service';
 import { IncomesService } from '../../services/incomes.service';
 import { SavingGoalsService } from '../../services/saving-goals.service';
+import { TransactionsService } from '../../services/transactions.service';
 import { TokenService } from '../../core/token.service';
+import { TransactionResponse } from '../../models/transactions.models';
 
 @Component({
   selector: 'app-dashboard-page',
@@ -21,6 +23,7 @@ export class DashboardPage implements OnInit {
   // Services
   private expensesService = inject(ExpensesService);
   private incomesService = inject(IncomesService);
+  private transactionsService = inject(TransactionsService);
   private categoriesService = inject(CategoriesService);
   private budgetsService = inject(BudgetsService);
   private goalsService = inject(SavingGoalsService);
@@ -50,6 +53,7 @@ export class DashboardPage implements OnInit {
   private rawCategories = signal<any[]>([]);
   private rawBudgets = signal<any[]>([]);
   private rawGoals = signal<any[]>([]);
+  recentTransactions = signal<TransactionResponse[]>([]);
 
   // Computed View Data
   stats = computed(() => {
@@ -199,7 +203,8 @@ export class DashboardPage implements OnInit {
       incomes: this.incomesService.getByUserDate(userId, start, end).pipe(catchError(() => of([]))),
       categories: this.categoriesService.getByUser(userId).pipe(catchError(() => of([]))),
       budgets: this.budgetsService.getByUser(userId).pipe(catchError(() => of([]))),
-      goals: this.goalsService.getByUser(userId).pipe(catchError(() => of([])))
+      goals: this.goalsService.getByUser(userId).pipe(catchError(() => of([]))),
+      recentTx: this.transactionsService.getTransactions(userId, 0, 5).pipe(catchError(() => of({ content: [] } as any)))
     }).pipe(finalize(() => this.isLoading.set(false))).subscribe(res => {
       this.rawAllExpenses.set(res.allExpenses);
       this.rawAllIncomes.set(res.allIncomes);
@@ -208,6 +213,7 @@ export class DashboardPage implements OnInit {
       this.rawCategories.set(res.categories);
       this.rawBudgets.set(res.budgets);
       this.rawGoals.set(res.goals);
+      this.recentTransactions.set(res.recentTx?.content || []);
 
       const totalIncome = (res.allIncomes || []).reduce((sum: number, i: any) => sum + (i.amount || 0), 0);
       const totalExpense = (res.allExpenses || []).reduce((sum: number, e: any) => sum + (e.amount || 0), 0);
@@ -239,6 +245,11 @@ export class DashboardPage implements OnInit {
 
   getPercent(item: any): number {
     return Math.min(100, Math.round((item.spent / item.limit) * 100));
+  }
+
+  formatShortDate(dateStr: string): string {
+    const date = new Date(dateStr);
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
   }
 }
 
