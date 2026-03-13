@@ -2,8 +2,8 @@
 
   <!-- Header -->
   <header class="space-y-1.5">
-    <h1 class="text-2xl font-black tracking-tight" style="color:#0f1e3c">Financial Domains</h1>
-    <p class="text-xs font-medium uppercase tracking-widest text-slate-400">Configure classifications for your resource allocation</p>
+    <h1 class="text-2xl font-black tracking-tight" style="color:#0f1e3c">Categories</h1>
+    <p class="text-xs font-medium uppercase tracking-widest text-slate-400">Create categories for income and expenses</p>
   </header>
 
   <div class="grid gap-8 lg:grid-cols-[380px_1fr]">
@@ -12,7 +12,7 @@
     <section class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
       <div class="border-b border-blue-900/20 px-6 py-4" style="background:linear-gradient(to right,#0f1e3c,#1a3260)">
         <h3 class="text-xs font-black uppercase tracking-widest text-blue-100">
-          {{ editingId ? 'Modify Domain' : 'Define New Domain' }}
+          {{ editingId ? 'Edit Category' : 'New Category' }}
         </h3>
       </div>
 
@@ -31,28 +31,28 @@
           </div>
           }
 
-          <!-- Domain Label -->
+          <!-- Category Name -->
           <div class="space-y-1.5">
-            <label class="ml-0.5 text-[10px] font-black uppercase tracking-widest text-slate-400">Domain Label</label>
+            <label class="ml-0.5 text-[10px] font-black uppercase tracking-widest text-slate-400">Category Name</label>
             <input type="text"
                    class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm font-semibold text-slate-800 placeholder-slate-300 outline-none transition focus:border-blue-300 focus:bg-white focus:ring-2 focus:ring-blue-50"
-                   [(ngModel)]="form.name" name="name" placeholder="Domain name…" />
+                   [(ngModel)]="form.name" name="name" placeholder="Category name…" />
           </div>
 
-          <!-- Flow Direction -->
+          <!-- Type -->
           <div class="space-y-1.5">
-            <label class="ml-0.5 text-[10px] font-black uppercase tracking-widest text-slate-400">Flow Direction</label>
+            <label class="ml-0.5 text-[10px] font-black uppercase tracking-widest text-slate-400">Type</label>
             <select
               class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm font-semibold text-slate-700 outline-none transition focus:border-blue-300 focus:bg-white focus:ring-2 focus:ring-blue-50"
               [(ngModel)]="form.type" name="type">
-              <option value="EXPENSE">Expense Account</option>
-              <option value="INCOME">Income Source</option>
+              <option value="EXPENSE">Expense</option>
+              <option value="INCOME">Income</option>
             </select>
           </div>
 
-          <!-- Signature Color -->
+          <!-- Color -->
           <div class="space-y-1.5">
-            <label class="ml-0.5 text-[10px] font-black uppercase tracking-widest text-slate-400">Signature Color</label>
+            <label class="ml-0.5 text-[10px] font-black uppercase tracking-widest text-slate-400">Color</label>
             <div class="flex items-center gap-3">
               <div class="relative h-11 w-11 shrink-0 overflow-hidden rounded-xl border border-slate-200 shadow-sm">
                 <input type="color"
@@ -70,7 +70,7 @@
             <button type="submit" [disabled]="isSaving()"
                     class="h-11 w-full rounded-xl text-xs font-black uppercase tracking-widest text-white shadow-sm transition disabled:opacity-40"
                     style="background:linear-gradient(135deg,#0f1e3c,#1e40af)">
-              {{ editingId ? 'Update Configuration' : 'Initialize Domain' }}
+              {{ editingId ? 'Update Category' : 'Create Category' }}
             </button>
             @if (editingId) {
             <button type="button" (click)="cancelEdit()"
@@ -87,7 +87,7 @@
     <!-- ── List Panel ── -->
     <section class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
       <div class="flex items-center justify-between border-b border-blue-900/20 px-6 py-4" style="background:linear-gradient(to right,#0f1e3c,#1a3260)">
-        <h3 class="text-xs font-black uppercase tracking-widest text-blue-100">Active Taxonomy</h3>
+        <h3 class="text-xs font-black uppercase tracking-widest text-blue-100">All Categories</h3>
         <span class="rounded-full border border-white/20 bg-white/10 px-2.5 py-0.5 text-[10px] font-black tabular-nums text-blue-200">
           {{ categories().length }}
         </span>
@@ -145,3 +145,4 @@
 
   </div>
 </div>
+

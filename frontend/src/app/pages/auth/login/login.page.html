@@ -7,8 +7,8 @@
            style="background:linear-gradient(135deg,#0f1e3c,#1e40af)">
         <span class="text-sm font-black tracking-tighter text-white">SS</span>
       </div>
-      <h1 class="mt-5 text-2xl font-black tracking-tight" style="color:#0f1e3c">Capital Portal</h1>
-      <p class="mt-1.5 text-xs font-medium uppercase tracking-widest text-slate-400">Secure entry to your financial ecosystem</p>
+      <h1 class="mt-5 text-2xl font-black tracking-tight" style="color:#0f1e3c">Sign In</h1>
+      <p class="mt-1.5 text-xs font-medium uppercase tracking-widest text-slate-400">Access your account</p>
     </div>
 
     <!-- Card -->
@@ -17,7 +17,7 @@
       <!-- Card header -->
       <div class="border-b border-blue-900/20 px-8 py-5" style="background:linear-gradient(to right,#0f1e3c,#1a3260)">
         <h2 class="text-sm font-black uppercase tracking-widest text-blue-100">Sign In</h2>
-        <p class="mt-0.5 text-[10px] font-bold uppercase tracking-widest text-blue-400">Authentication Required</p>
+        <p class="mt-0.5 text-[10px] font-bold uppercase tracking-widest text-blue-400">Welcome back</p>
       </div>
 
       <div class="px-8 py-8">
@@ -41,7 +41,7 @@
 
           <!-- Email -->
           <div class="space-y-1.5">
-            <label class="ml-0.5 text-[10px] font-black uppercase tracking-widest text-slate-400">Corporate Email</label>
+            <label class="ml-0.5 text-[10px] font-black uppercase tracking-widest text-slate-400">Email</label>
             <input type="email" formControlName="email"
                    class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm font-semibold text-slate-800 placeholder-slate-300 outline-none transition focus:border-blue-300 focus:bg-white focus:ring-2 focus:ring-blue-50"
                    placeholder="name@domain.com" />
@@ -53,14 +53,14 @@
           <!-- Password -->
           <div class="space-y-1.5">
             <div class="flex items-center justify-between">
-              <label class="ml-0.5 text-[10px] font-black uppercase tracking-widest text-slate-400">Access Secret</label>
-              <a href="#" class="text-[10px] font-black uppercase tracking-widest text-blue-400 transition hover:text-blue-700">Reset</a>
+              <label class="ml-0.5 text-[10px] font-black uppercase tracking-widest text-slate-400">Password</label>
+              <a href="#" class="text-[10px] font-black uppercase tracking-widest text-blue-400 transition hover:text-blue-700">Forgot?</a>
             </div>
             <input type="password" formControlName="password"
                    class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm font-semibold text-slate-800 placeholder-slate-300 outline-none transition focus:border-blue-300 focus:bg-white focus:ring-2 focus:ring-blue-50"
                    placeholder="••••••••" />
             @if (loginForm.controls.password.touched && loginForm.controls.password.invalid) {
-            <span class="ml-0.5 text-[10px] font-bold text-rose-500">Secret key required.</span>
+            <span class="ml-0.5 text-[10px] font-bold text-rose-500">Password required.</span>
             }
           </div>
 
@@ -68,7 +68,7 @@
           <button type="submit" [disabled]="isLoading()"
                   class="mt-2 h-11 w-full rounded-xl text-xs font-black uppercase tracking-widest text-white shadow-sm transition hover:opacity-90 active:scale-95 disabled:opacity-40"
                   style="background:linear-gradient(135deg,#0f1e3c,#1e40af)">
-            {{ isLoading() ? 'Validating…' : 'Initialize Session' }}
+            {{ isLoading() ? 'Validating…' : 'Sign In' }}
           </button>
 
         </form>
@@ -95,8 +95,8 @@
         <!-- Register -->
         <div class="mt-6 border-t border-slate-50 pt-6 text-center">
           <p class="text-xs font-semibold text-slate-400">
-            New to the ecosystem?
-            <a class="font-black text-blue-600 transition hover:text-blue-800" routerLink="/register">Register Instance</a>
+            New here?
+            <a class="font-black text-blue-600 transition hover:text-blue-800" routerLink="/register">Create account</a>
           </p>
         </div>
 
@@ -105,8 +105,9 @@
 
     <!-- Footer -->
     <p class="mt-8 text-center text-[9px] font-black uppercase tracking-widest text-slate-300">
-      © 2026 SaveSmart · Secure Transmission Enabled
+      © 2026 SaveSmart · Secure connection
     </p>
 
   </div>
 </div>
+

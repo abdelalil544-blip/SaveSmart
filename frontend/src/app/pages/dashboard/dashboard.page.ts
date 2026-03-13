@@ -44,6 +44,7 @@ export class DashboardPage implements OnInit {
   // Data
   private rawStats = signal<any>(null);
   private rawExpenses = signal<any[]>([]);
+  incomes = signal<any[]>([]);
   private rawAllExpenses = signal<any[]>([]);
   private rawAllIncomes = signal<any[]>([]);
   private rawCategories = signal<any[]>([]);
@@ -76,6 +77,100 @@ export class DashboardPage implements OnInit {
       .sort((a, b) => b.spent - a.spent);
   });
 
+  getIncomeTotal(): number {
+    return this.incomes().reduce((sum, i) => sum + (i.amount || 0), 0);
+  }
+
+  getIncomeBreakdown() {
+    const total = this.getIncomeTotal();
+    if (!total) return [];
+
+    const categoryMap = new Map<number | string, { id: number | string; name: string; color: string }>();
+    this.rawCategories()
+      .filter(c => c.type === 'INCOME')
+      .forEach(c => categoryMap.set(c.id, { id: c.id, name: c.name, color: c.color || '#94a3b8' }));
+
+    const totals = new Map<number | string, number>();
+    this.incomes().forEach(i => {
+      const key = i.categoryId;
+      totals.set(key, (totals.get(key) || 0) + (i.amount || 0));
+    });
+
+    const items = Array.from(totals.entries())
+      .map(([id, amount]) => {
+        const meta = categoryMap.get(id);
+        return {
+          name: meta?.name || 'Other',
+          amount,
+          percent: (amount / total) * 100,
+          color: meta?.color || '#cbd5f5'
+        };
+      })
+      .sort((a, b) => b.amount - a.amount);
+
+    return items;
+  }
+
+  getIncomeDonutGradient(): string {
+    const breakdown = this.getIncomeBreakdown();
+    if (!breakdown.length) return 'conic-gradient(#e2e8f0 0% 100%)';
+
+    let start = 0;
+    const stops = breakdown.map(item => {
+      const end = start + item.percent;
+      const seg = `${item.color} ${start}% ${end}%`;
+      start = end;
+      return seg;
+    });
+    return `conic-gradient(${stops.join(', ')})`;
+  }
+
+  getTotalSpent(): number {
+    return this.categories().reduce((sum, item) => sum + (item.spent || 0), 0);
+  }
+
+  getCategoryBreakdown() {
+    const total = this.getTotalSpent();
+    if (!total) return [];
+
+    const sorted = [...this.categories()].sort((a, b) => b.spent - a.spent);
+    const top = sorted.slice(0, 4);
+    const rest = sorted.slice(4);
+
+    const breakdown = top.map(item => ({
+      name: item.name,
+      amount: item.spent,
+      percent: (item.spent / total) * 100,
+      color: item.color || '#94a3b8'
+    }));
+
+    if (rest.length) {
+      const otherAmount = rest.reduce((sum, item) => sum + (item.spent || 0), 0);
+      breakdown.push({
+        name: 'Other',
+        amount: otherAmount,
+        percent: (otherAmount / total) * 100,
+        color: '#cbd5f5'
+      });
+    }
+
+    return breakdown;
+  }
+
+  getDonutGradient(): string {
+    const breakdown = this.getCategoryBreakdown();
+    if (!breakdown.length) return 'conic-gradient(#e2e8f0 0% 100%)';
+
+    let start = 0;
+    const stops = breakdown.map(item => {
+      const end = start + item.percent;
+      const seg = `${item.color} ${start}% ${end}%`;
+      start = end;
+      return seg;
+    });
+    return `conic-gradient(${stops.join(', ')})`;
+  }
+
   highlights = computed(() => {
     const goals = this.rawGoals().filter(g => g.status === 'ACTIVE');
     const topGoal = [...goals].sort((a, b) => (b.currentAmount / (b.targetAmount || 1)) - (a.currentAmount / (a.targetAmount || 1)))[0];
@@ -101,6 +196,7 @@ export class DashboardPage implements OnInit {
       allExpenses: this.expensesService.getByUser(userId).pipe(catchError(() => of([]))),
       allIncomes: this.incomesService.getByUser(userId).pipe(catchError(() => of([]))),
       expenses: this.expensesService.getByUserDate(userId, start, end).pipe(catchError(() => of([]))),
+      incomes: this.incomesService.getByUserDate(userId, start, end).pipe(catchError(() => of([]))),
       categories: this.categoriesService.getByUser(userId).pipe(catchError(() => of([]))),
       budgets: this.budgetsService.getByUser(userId).pipe(catchError(() => of([]))),
       goals: this.goalsService.getByUser(userId).pipe(catchError(() => of([])))
@@ -108,6 +204,7 @@ export class DashboardPage implements OnInit {
       this.rawAllExpenses.set(res.allExpenses);
       this.rawAllIncomes.set(res.allIncomes);
       this.rawExpenses.set(res.expenses);
+      this.incomes.set(res.incomes);
       this.rawCategories.set(res.categories);
       this.rawBudgets.set(res.budgets);
       this.rawGoals.set(res.goals);

@@ -3,8 +3,8 @@
   <!-- Header -->
   <header class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
     <div class="space-y-1.5">
-      <h1 class="text-2xl font-black tracking-tight" style="color:#0f1e3c">Ledger History</h1>
-      <p class="text-xs font-medium uppercase tracking-widest text-slate-400">Audit trail of all registered capital movements</p>
+      <h1 class="text-2xl font-black tracking-tight" style="color:#0f1e3c">Transactions</h1>
+      <p class="text-xs font-medium uppercase tracking-widest text-slate-400">All income and expenses</p>
     </div>
     <button type="button" (click)="openTransactionModal()"
             class="h-10 rounded-xl px-5 text-[10px] font-black uppercase tracking-widest text-white shadow-sm transition hover:opacity-90 active:scale-95"
@@ -35,7 +35,7 @@
         <thead>
         <tr class="border-b border-blue-900/20" style="background:linear-gradient(to right,#0f1e3c,#1a3260)">
           <th class="px-6 py-4 text-[10px] font-black uppercase tracking-[0.12em] text-blue-200">Date</th>
-          <th class="px-6 py-4 text-[10px] font-black uppercase tracking-[0.12em] text-blue-200">Reference</th>
+          <th class="px-6 py-4 text-[10px] font-black uppercase tracking-[0.12em] text-blue-200">Category/Note</th>
           <th class="px-6 py-4 text-[10px] font-black uppercase tracking-[0.12em] text-blue-200">Type</th>
           <th class="px-6 py-4 text-right text-[10px] font-black uppercase tracking-[0.12em] text-blue-200">Amount (EUR)</th>
         </tr>
@@ -57,7 +57,7 @@
         } @else if (!entries().length) {
         <tr>
           <td colspan="4" class="px-6 py-24 text-center">
-            <p class="text-xs font-semibold uppercase tracking-widest text-slate-300">No entries found</p>
+            <p class="text-xs font-semibold uppercase tracking-widest text-slate-300">No transactions found</p>
           </td>
         </tr>
 
@@ -93,7 +93,7 @@
                       [class.bg-amber-50]="entry.type !== 'INCOME'"
                       [class.text-amber-700]="entry.type !== 'INCOME'"
                       [class.ring-amber-200]="entry.type !== 'INCOME'">
-                  {{ entry.type === 'INCOME' ? 'Inflow' : 'Outflow' }}
+                  {{ entry.type === 'INCOME' ? 'Income' : 'Expense' }}
                 </span>
           </td>
 
@@ -158,8 +158,8 @@
     <div class="w-full max-w-lg overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl">
       <div class="flex items-center justify-between border-b border-slate-100 px-6 py-4" style="background:linear-gradient(to right,#0f1e3c,#1a3260)">
         <div>
-          <h2 class="text-sm font-black uppercase tracking-widest text-blue-100">New Ledger Entry</h2>
-          <p class="mt-0.5 text-[10px] text-blue-300">Pick the exact date for this transaction</p>
+          <h2 class="text-sm font-black uppercase tracking-widest text-blue-100">New Transaction</h2>
+          <p class="mt-0.5 text-[10px] text-blue-300">Choose a date for this transaction</p>
         </div>
         <button type="button" (click)="closeTransactionModal()" class="text-blue-200 hover:text-white text-base leading-none"></button>
       </div>
@@ -167,12 +167,12 @@
       <form class="p-6 space-y-4" (ngSubmit)="submitTransaction()">
         <div class="grid gap-3 sm:grid-cols-2">
           <div class="space-y-1.5">
-            <label class="text-[10px] font-black uppercase tracking-widest text-slate-400">Classification</label>
+            <label class="text-[10px] font-black uppercase tracking-widest text-slate-400">Type</label>
             <select
               class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm font-semibold text-slate-700 outline-none transition focus:border-blue-300 focus:bg-white focus:ring-2 focus:ring-blue-50"
               [(ngModel)]="transactionForm.type" name="type">
-              <option value="EXPENSE">Operational Expense</option>
-              <option value="INCOME">Capital Inflow</option>
+              <option value="EXPENSE">Expense</option>
+              <option value="INCOME">Capital Income</option>
             </select>
           </div>
 
@@ -186,18 +186,18 @@
 
         <div class="grid gap-3 sm:grid-cols-2">
           <div class="space-y-1.5">
-            <label class="text-[10px] font-black uppercase tracking-widest text-slate-400">Value (EUR)</label>
+            <label class="text-[10px] font-black uppercase tracking-widest text-slate-400">Amount (EUR)</label>
             <input type="number"
                    class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm font-semibold text-slate-800 placeholder-slate-300 outline-none transition focus:border-blue-300 focus:bg-white focus:ring-2 focus:ring-blue-50"
                    placeholder="0.00" name="amount" [(ngModel)]="transactionForm.amount" />
           </div>
 
           <div class="space-y-1.5">
-            <label class="text-[10px] font-black uppercase tracking-widest text-slate-400">Reference Domain</label>
+            <label class="text-[10px] font-black uppercase tracking-widest text-slate-400">Category</label>
             <select
               class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm font-semibold text-slate-700 outline-none transition focus:border-blue-300 focus:bg-white focus:ring-2 focus:ring-blue-50"
               [(ngModel)]="transactionForm.categoryId" name="categoryId">
-              <option value="">Select Domain</option>
+              <option value="">Select category</option>
               @for (cat of filteredCategories; track cat.id) {
               <option [value]="cat.id">{{ cat.name }}</option>
               }
@@ -206,7 +206,7 @@
         </div>
 
         <div class="space-y-1.5">
-          <label class="text-[10px] font-black uppercase tracking-widest text-slate-400">Description (Optional)</label>
+          <label class="text-[10px] font-black uppercase tracking-widest text-slate-400">Description (optional)</label>
           <input type="text"
                  class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm font-semibold text-slate-800 placeholder-slate-300 outline-none transition focus:border-blue-300 focus:bg-white focus:ring-2 focus:ring-blue-50"
                  placeholder="Note about this transaction" name="description" [(ngModel)]="transactionForm.description" />
@@ -220,7 +220,7 @@
           <button type="submit" [disabled]="isSaving()"
                   class="flex-1 rounded-xl py-2.5 text-[10px] font-black uppercase tracking-widest text-white shadow-sm transition disabled:opacity-40"
                   style="background:linear-gradient(135deg,#0f1e3c,#1e40af)">
-            {{ isSaving() ? 'Recording' : 'Execute Entry' }}
+            {{ isSaving() ? 'Recording' : 'Save Transaction' }}
           </button>
         </div>
       </form>
@@ -228,3 +228,4 @@
   </div>
   }
 </div>
+

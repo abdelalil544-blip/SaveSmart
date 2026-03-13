@@ -3,13 +3,13 @@
   <!-- Header -->
   <header class="flex flex-col justify-between gap-6 sm:flex-row sm:items-end">
     <div class="space-y-1">
-      <h1 class="text-2xl font-black tracking-tight text-navy-900" style="color:#0f1e3c">Capital Allocation</h1>
-      <p class="text-xs font-medium uppercase tracking-widest text-slate-400">Define operational limits and resource reserves</p>
+      <h1 class="text-2xl font-black tracking-tight text-navy-900" style="color:#0f1e3c">Budgets</h1>
+      <p class="text-xs font-medium uppercase tracking-widest text-slate-400">Set spending limits by category</p>
     </div>
 
     <!-- Period Selector -->
     <div class="inline-flex items-center gap-2 rounded-xl border border-blue-100 bg-blue-50 px-4 py-2.5 shadow-sm">
-      <span class="text-[10px] font-black uppercase tracking-widest text-blue-400">Period</span>
+      <span class="text-[10px] font-black uppercase tracking-widest text-blue-400">Month</span>
       <div class="h-3 w-px bg-blue-200"></div>
       <select class="bg-transparent text-xs font-bold text-blue-900 outline-none cursor-pointer"
               [(ngModel)]="selectedMonth" (change)="onPeriodChange()">
@@ -28,7 +28,7 @@
     <section class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
       <div class="border-b border-slate-100 px-6 py-4" style="background:linear-gradient(to right,#0f1e3c,#1a3260)">
         <h3 class="text-xs font-black uppercase tracking-widest text-blue-100">
-          {{ editingId ? 'Refine Allocation' : 'New Budget' }}
+          {{ editingId ? 'Edit Budget' : 'New Budget' }}
         </h3>
       </div>
 
@@ -49,7 +49,7 @@
 
           <!-- Amount -->
           <div class="space-y-1.5">
-            <label class="ml-0.5 text-[10px] font-black uppercase tracking-widest text-slate-400">Assigned Value (EUR)</label>
+            <label class="ml-0.5 text-[10px] font-black uppercase tracking-widest text-slate-400">Budget Amount (EUR)</label>
             <div class="relative">
               <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-sm font-bold text-slate-300">€</span>
               <input type="number"
@@ -63,16 +63,16 @@
             <input type="checkbox" id="isGlobal"
                    class="h-4 w-4 rounded border-blue-200 accent-blue-700"
                    [(ngModel)]="form.isGlobal" name="isGlobal">
-            <span class="text-xs font-bold text-blue-900">Global Strategic Reserve</span>
+            <span class="text-xs font-bold text-blue-900">Overall Budget</span>
           </label>
 
           <!-- Category -->
           <div class="space-y-1.5">
-            <label class="ml-0.5 text-[10px] font-black uppercase tracking-widest text-slate-400">Target Domain</label>
+            <label class="ml-0.5 text-[10px] font-black uppercase tracking-widest text-slate-400">Category</label>
             <select
               class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm font-semibold text-slate-700 outline-none transition focus:border-blue-300 focus:bg-white focus:ring-2 focus:ring-blue-50 disabled:cursor-not-allowed disabled:opacity-40"
               [(ngModel)]="form.categoryId" name="categoryId" [disabled]="form.isGlobal">
-              <option value="">Select Domain…</option>
+              <option value="">Select category…</option>
               <option *ngFor="let category of categories" [value]="category.id">{{ category.name }}</option>
             </select>
           </div>
@@ -102,7 +102,7 @@
             <button type="submit" [disabled]="isLoading()"
                     class="h-11 w-full rounded-xl text-xs font-black uppercase tracking-widest text-white shadow-sm transition disabled:opacity-40"
                     style="background:linear-gradient(135deg,#0f1e3c,#1e40af)">
-              {{ editingId ? 'Update Allocation' : 'Execute Budget' }}
+              {{ editingId ? 'Update Budget' : 'Create Budget' }}
             </button>
             @if (editingId) {
             <button type="button" (click)="cancelEdit()"
@@ -116,12 +116,12 @@
       </div>
     </section>
 
-    <!-- ── Allocation Portfolio ── -->
+    <!-- ── Budget List ── -->
     <section class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
 
       <!-- Section header + toggle -->
       <div class="flex items-center justify-between border-b border-slate-100 px-6 py-4" style="background:linear-gradient(to right,#0f1e3c,#1a3260)">
-        <h3 class="text-xs font-black uppercase tracking-widest text-blue-100">Allocation Portfolio</h3>
+        <h3 class="text-xs font-black uppercase tracking-widest text-blue-100">Budget List</h3>
         <div class="flex items-center gap-1 rounded-lg border border-white/10 bg-white/10 p-1 backdrop-blur-sm">
           <button (click)="toggleView('selected')"
                   class="rounded-md px-3 py-1 text-[10px] font-black uppercase tracking-widest transition-all"
@@ -154,7 +154,7 @@
           @if (viewMode === 'selected') {
           @if (!filteredBudgets.length) {
           <div class="py-20 text-center">
-            <p class="text-xs font-semibold uppercase tracking-widest text-slate-300">No allocations for this period</p>
+            <p class="text-xs font-semibold uppercase tracking-widest text-slate-300">No budgets for this month</p>
           </div>
           } @else {
           @for (budget of filteredBudgets; track budget.id) {
@@ -211,3 +211,4 @@
 
   </div>
 </div>
+

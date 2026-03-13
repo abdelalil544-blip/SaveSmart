@@ -3,17 +3,17 @@
   <!-- Header -->
   <header class="relative flex flex-col justify-between gap-6 sm:flex-row sm:items-end">
     <div class="space-y-1.5">
-      <h1 class="text-2xl font-black tracking-tight" style="color:#0f1e3c">Financial Command</h1>
+      <h1 class="text-2xl font-black tracking-tight" style="color:#0f1e3c">Dashboard</h1>
       <p class="flex items-center gap-2 text-xs font-medium uppercase tracking-widest text-slate-400">
         <span class="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-        Monitor your capital efficiency and resource distribution
+        See your income, expenses, and budget at a glance
       </p>
     </div>
 
     <div class="flex items-center gap-2">
       <!-- Period selector -->
       <div class="inline-flex items-center gap-2 rounded-xl border border-blue-100 bg-blue-50 px-4 py-2.5 shadow-sm">
-        <span class="text-[10px] font-black uppercase tracking-widest text-blue-400">Period</span>
+        <span class="text-[10px] font-black uppercase tracking-widest text-blue-400">Month</span>
         <div class="h-3 w-px bg-blue-200"></div>
         <select class="bg-transparent text-xs font-bold text-blue-900 outline-none cursor-pointer"
                 [ngModel]="selectedMonth()" (ngModelChange)="selectedMonth.set($event); loadDashboard()">
@@ -31,7 +31,7 @@
       <!-- Reset -->
       <button (click)="resetFilters()"
               class="flex h-10 items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-xs font-black uppercase tracking-widest text-slate-500 shadow-sm transition hover:bg-slate-50 hover:border-slate-300 active:scale-95">
-        ↺ Reset
+        Reset
       </button>
     </div>
   </header>
@@ -80,68 +80,118 @@
     </div>
     }
   </section>  <!-- Analysis Grid -->
-  <section class="grid gap-6 lg:grid-cols-3">
+  <section class="grid gap-6 lg:grid-cols-2">
 
-    <!-- Allocation Performance -->
-    <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm lg:col-span-2">
+    <!-- Expenses by Category -->
+    <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
       <div class="flex items-center justify-between border-b border-blue-900/20 px-6 py-4" style="background:linear-gradient(to right,#0f1e3c,#1a3260)">
-        <h3 class="text-xs font-black uppercase tracking-widest text-blue-100">Allocation Performance</h3>
-        <span class="text-[10px] font-black uppercase tracking-widest text-blue-400">Efficiency metrics</span>
+        <h3 class="text-xs font-black uppercase tracking-widest text-blue-100">Expenses by Category</h3>
+        <span class="text-[10px] font-black uppercase tracking-widest text-blue-400">This month</span>
       </div>
 
       <div class="p-6">
         @if (isLoading()) {
         <div class="space-y-4">
-          <div class="h-14 animate-pulse rounded-xl bg-slate-50"></div>
-          <div class="h-14 animate-pulse rounded-xl bg-slate-50"></div>
-          <div class="h-14 animate-pulse rounded-xl bg-slate-50"></div>
+          <div class="h-48 animate-pulse rounded-2xl bg-slate-50"></div>
+          <div class="h-24 animate-pulse rounded-2xl bg-slate-50"></div>
         </div>
         } @else if (!categories().length) {
         <div class="py-16 text-center">
-          <p class="text-xs font-semibold uppercase tracking-widest text-slate-300">No allocation data for this period</p>
+          <p class="text-xs font-semibold uppercase tracking-widest text-slate-300">No expense data for this month</p>
         </div>
         } @else {
-        <div class="grid gap-5 sm:grid-cols-2">
-          @for (item of categories(); track item.name) {
-          <div class="space-y-3 rounded-xl border border-slate-100 p-4 transition hover:border-blue-100 hover:bg-blue-50/20">
-            <div class="flex items-center justify-between">
-              <div class="flex items-center gap-2.5">
-                <div class="h-2.5 w-2.5 rounded-full shrink-0" [style.background]="item.color"></div>
-                <span class="text-xs font-bold uppercase tracking-tight" style="color:#0f1e3c">{{ item.name }}</span>
-              </div>
-              <span class="text-[10px] font-black tabular-nums text-slate-400">{{ getPercent(item) }}%</span>
-            </div>
-
-            <div class="h-1.5 w-full overflow-hidden rounded-full bg-slate-100">
-              <div class="h-full rounded-full transition-all duration-1000 ease-out"
-                   [style.width.%]="getPercent(item)"
-                   [style.background]="item.hasBudget && item.spent > item.limit ? '#ef4444' : item.color">
+        <div class="grid gap-8 lg:grid-cols-[240px_1fr] items-center">
+          <div class="flex items-center justify-center">
+            <div class="relative h-48 w-48">
+              <div class="absolute inset-0 rounded-full" [style.background]="getDonutGradient()"></div>
+              <div class="absolute inset-6 rounded-full bg-white"></div>
+              <div class="absolute inset-0 flex flex-col items-center justify-center text-center">
+                <p class="text-[10px] font-black uppercase tracking-widest text-slate-400">Total spent</p>
+                <p class="mt-1 text-lg font-black tabular-nums" style="color:#0f1e3c">
+                  {{ getTotalSpent() | currency:'EUR':'symbol':'1.0-0' }}
+                </p>
               </div>
             </div>
+          </div>
 
-            <div class="flex justify-between text-[10px] font-bold">
-              <span [class.text-rose-500]="item.hasBudget && item.spent > item.limit" [class.text-slate-500]="!(item.hasBudget && item.spent > item.limit)">
-                {{ item.spent | currency:'EUR':'symbol':'1.0-0' }} spent
-              </span>
-              <span class="text-slate-400">/ {{ item.limit | currency:'EUR':'symbol':'1.0-0' }}</span>
-            </div>
-
-            @if (item.hasBudget && item.spent > item.limit) {
-            <div class="flex items-center gap-1.5 rounded-lg bg-rose-50 px-3 py-1.5 text-[9px] font-black uppercase tracking-wider text-rose-600 ring-1 ring-rose-100">
-              ⚠ Exceeded by {{ (item.spent - item.limit) | currency:'EUR':'symbol':'1.0-0' }}
+          <div class="space-y-3">
+            @for (item of getCategoryBreakdown(); track item.name) {
+            <div class="flex items-center justify-between rounded-xl border border-slate-100 bg-slate-50/40 px-4 py-3">
+              <div class="flex items-center gap-3">
+                <span class="h-2.5 w-2.5 rounded-full" [style.background]="item.color"></span>
+                <span class="text-xs font-semibold" style="color:#0f1e3c">{{ item.name }}</span>
+              </div>
+              <div class="text-right">
+                <p class="text-xs font-black tabular-nums text-slate-700">
+                  {{ item.amount | currency:'EUR':'symbol':'1.0-0' }}
+                </p>
+                <p class="text-[10px] font-bold text-slate-400">{{ item.percent | number:'1.0-0' }}%</p>
+              </div>
             </div>
             }
           </div>
-          }
         </div>
         }
       </div>
     </div>
 
-    <!-- Momentum Indicators -->
+    <!-- Income by Category -->
     <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+      <div class="flex items-center justify-between border-b border-blue-900/20 px-6 py-4" style="background:linear-gradient(to right,#0f1e3c,#1a3260)">
+        <h3 class="text-xs font-black uppercase tracking-widest text-blue-100">Income by Category</h3>
+        <span class="text-[10px] font-black uppercase tracking-widest text-blue-400">This month</span>
+      </div>
+
+      <div class="p-6">
+        @if (isLoading()) {
+        <div class="space-y-4">
+          <div class="h-48 animate-pulse rounded-2xl bg-slate-50"></div>
+          <div class="h-24 animate-pulse rounded-2xl bg-slate-50"></div>
+        </div>
+        } @else if (!incomes().length) {
+        <div class="py-16 text-center">
+          <p class="text-xs font-semibold uppercase tracking-widest text-slate-300">No income data for this month</p>
+        </div>
+        } @else {
+        <div class="grid gap-8 lg:grid-cols-[240px_1fr] items-center">
+          <div class="flex items-center justify-center">
+            <div class="relative h-48 w-48">
+              <div class="absolute inset-0 rounded-full" [style.background]="getIncomeDonutGradient()"></div>
+              <div class="absolute inset-6 rounded-full bg-white"></div>
+              <div class="absolute inset-0 flex flex-col items-center justify-center text-center">
+                <p class="text-[10px] font-black uppercase tracking-widest text-slate-400">Total income</p>
+                <p class="mt-1 text-lg font-black tabular-nums" style="color:#0f1e3c">
+                  {{ getIncomeTotal() | currency:'EUR':'symbol':'1.0-0' }}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="space-y-3">
+            @for (item of getIncomeBreakdown(); track item.name) {
+            <div class="flex items-center justify-between rounded-xl border border-slate-100 bg-slate-50/40 px-4 py-3">
+              <div class="flex items-center gap-3">
+                <span class="h-2.5 w-2.5 rounded-full" [style.background]="item.color"></span>
+                <span class="text-xs font-semibold" style="color:#0f1e3c">{{ item.name }}</span>
+              </div>
+              <div class="text-right">
+                <p class="text-xs font-black tabular-nums text-slate-700">
+                  {{ item.amount | currency:'EUR':'symbol':'1.0-0' }}
+                </p>
+                <p class="text-[10px] font-bold text-slate-400">{{ item.percent | number:'1.0-0' }}%</p>
+              </div>
+            </div>
+            }
+          </div>
+        </div>
+        }
+      </div>
+    </div>
+
+    <!-- Goals Overview -->
+    <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm lg:col-span-2">
       <div class="border-b border-blue-900/20 px-6 py-4" style="background:linear-gradient(to right,#0f1e3c,#1a3260)">
-        <h3 class="text-xs font-black uppercase tracking-widest text-blue-100">Momentum Indicators</h3>
+        <h3 class="text-xs font-black uppercase tracking-widest text-blue-100">Goals Overview</h3>
       </div>
 
       <div class="p-6 space-y-3">
@@ -159,10 +209,10 @@
 
         <!-- CTA -->
         <div class="mt-2 overflow-hidden rounded-xl border border-blue-900/30 p-5 text-white shadow-sm" style="background:linear-gradient(135deg,#0f1e3c,#1e40af)">
-          <p class="text-[9px] font-black uppercase tracking-widest text-blue-300">Pro Optimization</p>
-          <p class="mt-1.5 text-sm font-bold text-white leading-snug">Optimize your savings with AI-driven insights.</p>
+          <p class="text-[9px] font-black uppercase tracking-widest text-blue-300">Tips</p>
+          <p class="mt-1.5 text-sm font-bold text-white leading-snug">Get simple ideas to save more each month.</p>
           <button class="mt-4 w-full rounded-xl border border-white/20 bg-white/10 py-2.5 text-[10px] font-black uppercase tracking-widest text-white transition hover:bg-white/20">
-            Analyze Now
+            See Tips
           </button>
         </div>
       </div>
@@ -170,5 +220,8 @@
 
   </section>
 </div>
+
+
+
 
 
