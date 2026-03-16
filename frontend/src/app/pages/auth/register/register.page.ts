@@ -45,7 +45,7 @@ export class RegisterPage {
     const payload = this.registerForm.getRawValue();
     this.authService.register(payload).subscribe({
           next: (response) => {
-            this.tokenService.setTokens(response.accessToken, response.refreshToken, response.user?.id);
+            this.tokenService.setTokens(response.accessToken, response.refreshToken, response.user?.id, response.user?.role);
             this.successMessage.set('Compte cree avec succes.');
             this.isLoading.set(false);
             this.router.navigateByUrl('/');

@@ -19,7 +19,6 @@ export class AppShellPage implements OnInit {
   private router = inject(Router);
 
   userInitials = signal('U');
-
   ngOnInit() {
     const userId = this.tokenService.getUserId();
     if (userId) {

@@ -21,4 +21,6 @@ public interface UserService {
     Optional<UserResponseDTO> findByEmail(String email);
 
     boolean existsByEmail(String email);
+
+    UserResponseDTO resetPassword(String id, String rawPassword);
 }

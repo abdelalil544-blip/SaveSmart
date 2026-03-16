@@ -42,10 +42,15 @@ export class LoginPage {
     const payload = this.loginForm.getRawValue();
     this.authService.login(payload).subscribe({
       next: (response) => {
-        this.tokenService.setTokens(response.accessToken, response.refreshToken, response.user?.id);
+        this.tokenService.setTokens(response.accessToken, response.refreshToken, response.user?.id, response.user?.role);
         this.successMessage.set('Connexion reussie.');
         this.isLoading.set(false);
-        this.router.navigateByUrl('/app/dashboard');
+        const role = response.user?.role;
+        if (role === 'ROLE_ADMIN') {
+          this.router.navigateByUrl('/admin/users');
+        } else {
+          this.router.navigateByUrl('/app/dashboard');
+        }
       },
       error: (error) => {
         this.isLoading.set(false);

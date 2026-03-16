@@ -51,8 +51,6 @@ export class BudgetsPage implements OnInit {
   years: number[] = [];
   selectedMonth: number;
   selectedYear: number;
-  viewMode: 'selected' | 'all' = 'selected';
-  groupedBudgets: { label: string; items: BudgetResponse[] }[] = [];
 
   form = {
     budgetAmount: '',
@@ -90,9 +88,11 @@ export class BudgetsPage implements OnInit {
     this.applyFilter();
   }
 
-  toggleView(mode: 'selected' | 'all'): void {
-    this.viewMode = mode;
-    this.applyFilter();
+  resetFilters(): void {
+    const now = new Date();
+    this.selectedMonth = now.getMonth() + 1;
+    this.selectedYear = now.getFullYear();
+    this.onPeriodChange();
   }
 
   submitBudget(): void {
@@ -270,18 +270,6 @@ export class BudgetsPage implements OnInit {
     this.filteredBudgets = sorted.filter(
       (budget) => budget.month === Number(this.selectedMonth) && budget.year === Number(this.selectedYear)
     );
-
-    const groups = new Map<string, BudgetResponse[]>();
-    sorted.forEach((budget) => {
-      const key = `${budget.year}-${String(budget.month).padStart(2, '0')}`;
-      if (!groups.has(key)) {
-        groups.set(key, []);
-      }
-      groups.get(key)?.push(budget);
-    });
-    this.groupedBudgets = Array.from(groups.entries()).map(([key, items]) => ({
-      label: key,
-      items
-    }));
   }
 }
+

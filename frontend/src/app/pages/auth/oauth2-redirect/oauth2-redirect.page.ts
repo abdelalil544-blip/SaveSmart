@@ -70,7 +70,8 @@ export class OAuth2RedirectPage implements OnInit {
     }
 
     const userId = this.extractUserId(accessToken);
-    this.tokenService.setTokens(accessToken, refreshToken, userId);
+    const role = this.extractUserRole(accessToken);
+    this.tokenService.setTokens(accessToken, refreshToken, userId, role);
     this.status.set('success');
     this.router.navigateByUrl('/app/dashboard');
   }
@@ -91,6 +92,23 @@ export class OAuth2RedirectPage implements OnInit {
       }
       const data = JSON.parse(payload) as { userId?: string };
       return data.userId ?? null;
+    } catch {
+      return null;
+    }
+  }
+
+  private extractUserRole(token: string): string | null {
+    try {
+      const parts = token.split('.');
+      if (parts.length < 2) {
+        return null;
+      }
+      const payload = this.decodeBase64Url(parts[1]);
+      if (!payload) {
+        return null;
+      }
+      const data = JSON.parse(payload) as { role?: string };
+      return data.role ?? null;
     } catch {
       return null;
     }

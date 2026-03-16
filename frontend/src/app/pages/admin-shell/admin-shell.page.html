@@ -1,0 +1,32 @@
+<div class="min-h-screen bg-slate-50">
+  <div class="grid min-h-screen grid-cols-1 lg:grid-cols-[260px_1fr]">
+
+    <!-- Sidebar -->
+    <aside class="border-r border-slate-200 bg-white">
+      <div class="flex h-16 items-center gap-2.5 px-6">
+        <div class="flex h-9 w-9 items-center justify-center rounded-xl shadow-sm"
+             style="background:linear-gradient(135deg,#0f1e3c,#1e40af)">
+          <span class="text-xs font-black tracking-tighter text-white">SS</span>
+        </div>
+        <div>
+          <p class="text-sm font-black" style="color:#0f1e3c">Admin</p>
+          <p class="text-[10px] font-semibold uppercase tracking-widest text-slate-400">SaveSmart</p>
+        </div>
+      </div>
+
+      <nav class="px-4 pb-6">
+        <p class="px-2 pt-4 text-[9px] font-black uppercase tracking-[0.2em] text-slate-400">Manage</p>
+        <a routerLink="/admin/users"
+           routerLinkActive="bg-blue-50 text-blue-800 ring-1 ring-blue-100"
+           class="mt-2 flex items-center gap-2 rounded-xl px-3 py-2 text-[11px] font-black uppercase tracking-widest text-slate-500 transition hover:bg-blue-50/60 hover:text-blue-700">
+          Users
+        </a>
+      </nav>
+    </aside>
+
+    <!-- Content -->
+    <main class="px-6 py-10 sm:px-8 lg:px-10">
+      <router-outlet />
+    </main>
+  </div>
+</div>

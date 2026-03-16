@@ -8,6 +8,7 @@ import com.example.backend.exception.ResourceNotFoundException;
 import com.example.backend.mapper.UserMapper;
 import com.example.backend.repository.UserRepository;
 import com.example.backend.service.UserService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,10 +19,12 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserServiceImpl(UserRepository userRepository, UserMapper userMapper) {
+    public UserServiceImpl(UserRepository userRepository, UserMapper userMapper, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -45,7 +48,7 @@ public class UserServiceImpl implements UserService {
             user.setEmail(dto.getEmail());
         }
         if (dto.getPassword() != null) {
-            user.setPassword(dto.getPassword());
+            user.setPassword(passwordEncoder.encode(dto.getPassword()));
         }
         if (dto.getPhoneNumber() != null) {
             user.setPhoneNumber(dto.getPhoneNumber());
@@ -85,5 +88,14 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean existsByEmail(String email) {
         return userRepository.existsByEmail(email);
+    }
+
+    @Override
+    public UserResponseDTO resetPassword(String id, String rawPassword) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found: " + id));
+        user.setPassword(passwordEncoder.encode(rawPassword));
+        User saved = userRepository.save(user);
+        return userMapper.toResponseDTO(saved);
     }
 }
