@@ -30,4 +30,9 @@ public interface BudgetRepository extends JpaRepository<Budget, String> {
             @Param("userId") String userId,
             @Param("year") Integer year
     );
+
+    @Query("select coalesce(sum(b.budgetAmount), 0) from Budget b where b.user.id = :userId")
+    BigDecimal sumByUserId(@Param("userId") String userId);
+
+    long countByUserId(String userId);
 }

@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 import { API_BASE_URL } from '../core/api.config';
-import { UserResponse, UserUpdate } from '../models/user.models';
+import { UserResponse, UserUpdate, UserStats } from '../models/user.models';
 
 @Injectable({ providedIn: 'root' })
 export class AdminUsersService {
@@ -17,6 +17,10 @@ export class AdminUsersService {
 
   getById(id: string): Observable<UserResponse> {
     return this.http.get<UserResponse>(`${this.api}/api/admin/users/${id}`);
+  }
+
+  getStats(id: string): Observable<UserStats> {
+    return this.http.get<UserStats>(`${this.api}/api/admin/users/${id}/stats`);
   }
 
   update(id: string, payload: UserUpdate): Observable<UserResponse> {

@@ -23,4 +23,6 @@ public interface UserService {
     boolean existsByEmail(String email);
 
     UserResponseDTO resetPassword(String id, String rawPassword);
+
+    com.example.backend.dto.user.UserStatsDTO getUserStats(String id);
 }

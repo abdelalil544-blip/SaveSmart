@@ -2,6 +2,7 @@ package com.example.backend.controller;
 
 import com.example.backend.dto.user.ResetPasswordDTO;
 import com.example.backend.dto.user.UserResponseDTO;
+import com.example.backend.dto.user.UserStatsDTO;
 import com.example.backend.dto.user.UserUpdateDTO;
 import com.example.backend.service.UserService;
 import jakarta.validation.Valid;
@@ -41,6 +42,11 @@ public class AdminUserController {
         return userService.findById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/{id}/stats")
+    public ResponseEntity<UserStatsDTO> getStats(@PathVariable String id) {
+        return ResponseEntity.ok(userService.getUserStats(id));
     }
 
     @PutMapping("/{id}")

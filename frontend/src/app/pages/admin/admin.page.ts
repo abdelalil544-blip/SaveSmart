@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 import { AdminUsersService } from '../../services/admin-users.service';
-import { UserResponse, UserUpdate } from '../../models/user.models';
+import { UserResponse, UserUpdate, UserStats } from '../../models/user.models';
 
 @Component({
   selector: 'app-admin-page',
@@ -16,6 +16,7 @@ export class AdminPage implements OnInit {
 
   users = signal<UserResponse[]>([]);
   selectedUser = signal<UserResponse | null>(null);
+  userStats = signal<UserStats | null>(null);
   searchQuery = '';
 
   isLoading = signal(false);
@@ -28,7 +29,7 @@ export class AdminPage implements OnInit {
   resetPassword = '';
 
   // Pagination
-  pageSize = 5;
+  pageSize = 8;
   currentPage = signal(0);
 
   ngOnInit(): void {
@@ -59,10 +60,12 @@ export class AdminPage implements OnInit {
 
   selectUser(user: UserResponse): void {
     this.setSelectedUser(user);
+    this.loadUserStats(user.id);
   }
 
   clearSelection(): void {
     this.setSelectedUser(null);
+    this.userStats.set(null);
   }
 
   updateUser(): void {
@@ -138,10 +141,18 @@ export class AdminPage implements OnInit {
     if (user) {
       this.editRole = user.role || 'ROLE_USER';
       this.editActive = !!user.active;
+      this.userStats.set(null);
     } else {
       this.editRole = 'ROLE_USER';
       this.editActive = true;
     }
+  }
+
+  private loadUserStats(id: string): void {
+    this.adminUsersService.getStats(id).subscribe({
+      next: (stats) => this.userStats.set(stats),
+      error: () => this.errorMessage.set('Failed to load user stats.')
+    });
   }
 
   get totalPages(): number {

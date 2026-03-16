@@ -23,4 +23,7 @@ public interface IncomeRepository extends JpaRepository<Income, String> {
             @Param("startDate") LocalDate startDate,
             @Param("endDate") LocalDate endDate
     );
+
+    @Query("select coalesce(sum(i.amount), 0) from Income i where i.user.id = :userId")
+    BigDecimal sumByUserId(@Param("userId") String userId);
 }

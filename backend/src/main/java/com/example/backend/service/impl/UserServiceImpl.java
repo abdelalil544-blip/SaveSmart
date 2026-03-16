@@ -6,8 +6,14 @@ import com.example.backend.dto.user.UserResponseDTO;
 import com.example.backend.dto.user.UserUpdateDTO;
 import com.example.backend.exception.ResourceNotFoundException;
 import com.example.backend.mapper.UserMapper;
+import com.example.backend.repository.BudgetRepository;
+import com.example.backend.repository.ExpenseRepository;
+import com.example.backend.repository.IncomeRepository;
+import com.example.backend.repository.SavingGoalRepository;
 import com.example.backend.repository.UserRepository;
 import com.example.backend.service.UserService;
+import com.example.backend.dto.user.UserStatsDTO;
+import com.example.backend.Entity.enums.GoalStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -20,11 +26,27 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
+    private final IncomeRepository incomeRepository;
+    private final ExpenseRepository expenseRepository;
+    private final BudgetRepository budgetRepository;
+    private final SavingGoalRepository savingGoalRepository;
 
-    public UserServiceImpl(UserRepository userRepository, UserMapper userMapper, PasswordEncoder passwordEncoder) {
+    public UserServiceImpl(
+            UserRepository userRepository,
+            UserMapper userMapper,
+            PasswordEncoder passwordEncoder,
+            IncomeRepository incomeRepository,
+            ExpenseRepository expenseRepository,
+            BudgetRepository budgetRepository,
+            SavingGoalRepository savingGoalRepository
+    ) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
         this.passwordEncoder = passwordEncoder;
+        this.incomeRepository = incomeRepository;
+        this.expenseRepository = expenseRepository;
+        this.budgetRepository = budgetRepository;
+        this.savingGoalRepository = savingGoalRepository;
     }
 
     @Override
@@ -97,5 +119,23 @@ public class UserServiceImpl implements UserService {
         user.setPassword(passwordEncoder.encode(rawPassword));
         User saved = userRepository.save(user);
         return userMapper.toResponseDTO(saved);
+    }
+
+    @Override
+    public UserStatsDTO getUserStats(String id) {
+        if (!userRepository.existsById(id)) {
+            throw new ResourceNotFoundException("User not found: " + id);
+        }
+
+        UserStatsDTO stats = new UserStatsDTO();
+        stats.setTotalIncome(incomeRepository.sumByUserId(id));
+        stats.setTotalExpense(expenseRepository.sumByUserId(id));
+        stats.setBudgetTotal(budgetRepository.sumByUserId(id));
+        stats.setBudgetCount(budgetRepository.countByUserId(id));
+        stats.setGoalCount(savingGoalRepository.countByUserId(id));
+        stats.setActiveGoals(savingGoalRepository.countByUserIdAndStatus(id, GoalStatus.ACTIVE));
+        stats.setCompletedGoals(savingGoalRepository.countByUserIdAndStatus(id, GoalStatus.COMPLETED));
+        stats.setCancelledGoals(savingGoalRepository.countByUserIdAndStatus(id, GoalStatus.CANCELLED));
+        return stats;
     }
 }

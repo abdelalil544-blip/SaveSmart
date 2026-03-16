@@ -8,6 +8,17 @@ export interface UserResponse {
     active: boolean;
 }
 
+export interface UserStats {
+    totalIncome: number;
+    totalExpense: number;
+    budgetTotal: number;
+    budgetCount: number;
+    goalCount: number;
+    activeGoals: number;
+    completedGoals: number;
+    cancelledGoals: number;
+}
+
 export interface UserUpdate {
     firstName?: string;
     lastName?: string;

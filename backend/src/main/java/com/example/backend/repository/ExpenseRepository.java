@@ -23,4 +23,7 @@ public interface ExpenseRepository extends JpaRepository<Expense, String> {
             @Param("startDate") LocalDate startDate,
             @Param("endDate") LocalDate endDate
     );
+
+    @Query("select coalesce(sum(e.amount), 0) from Expense e where e.user.id = :userId")
+    BigDecimal sumByUserId(@Param("userId") String userId);
 }
