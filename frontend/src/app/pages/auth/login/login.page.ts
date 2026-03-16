@@ -47,7 +47,7 @@ export class LoginPage {
         this.isLoading.set(false);
         const role = response.user?.role;
         if (role === 'ROLE_ADMIN') {
-          this.router.navigateByUrl('/admin/users');
+          this.router.navigateByUrl('/admin/overview');
         } else {
           this.router.navigateByUrl('/app/dashboard');
         }

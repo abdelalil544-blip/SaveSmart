@@ -50,12 +50,16 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/admin-shell/admin-shell.page').then((m) => m.AdminShellPage),
     children: [
       {
+        path: 'overview',
+        loadComponent: () => import('./pages/admin-overview/admin-overview.page').then((m) => m.AdminOverviewPage)
+      },
+      {
         path: 'users',
         loadComponent: () => import('./pages/admin/admin.page').then((m) => m.AdminPage)
       },
       {
         path: '',
-        redirectTo: 'users',
+        redirectTo: 'overview',
         pathMatch: 'full'
       }
     ]

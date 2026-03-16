@@ -35,4 +35,7 @@ public interface BudgetRepository extends JpaRepository<Budget, String> {
     BigDecimal sumByUserId(@Param("userId") String userId);
 
     long countByUserId(String userId);
+
+    @Query("select coalesce(sum(b.budgetAmount), 0) from Budget b")
+    BigDecimal sumAll();
 }

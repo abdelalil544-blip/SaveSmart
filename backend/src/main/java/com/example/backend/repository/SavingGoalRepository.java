@@ -14,4 +14,6 @@ public interface SavingGoalRepository extends JpaRepository<SavingGoal, String> 
     long countByUserId(String userId);
 
     long countByUserIdAndStatus(String userId, GoalStatus status);
+
+    long countByStatus(GoalStatus status);
 }
