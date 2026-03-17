@@ -19,6 +19,8 @@ export class CategoriesPage implements OnInit {
     isSaving = signal(false);
     errorMessage = signal<string | null>(null);
     successMessage = signal<string | null>(null);
+    showDeleteModal = signal(false);
+    deletingCategory = signal<CategoryResponse | null>(null);
 
     editingId: string | null = null;
     form = {
@@ -98,12 +100,29 @@ export class CategoriesPage implements OnInit {
     }
 
     deleteCategory(id: string): void {
-        if (!confirm('Are you sure you want to delete this category?')) return;
+        this.openDeleteModal(id);
+    }
 
-        this.categoriesService.delete(id).subscribe({
+    openDeleteModal(id: string): void {
+        const cat = this.categories().find(c => c.id === id) || null;
+        this.deletingCategory.set(cat);
+        this.showDeleteModal.set(true);
+    }
+
+    closeDeleteModal(): void {
+        this.showDeleteModal.set(false);
+        this.deletingCategory.set(null);
+    }
+
+    confirmDeleteCategory(): void {
+        const cat = this.deletingCategory();
+        if (!cat) return;
+
+        this.categoriesService.delete(cat.id).subscribe({
             next: () => {
                 this.successMessage.set('Category deleted.');
                 this.loadCategories();
+                this.closeDeleteModal();
             },
             error: () => this.errorMessage.set('Failed to delete category.')
         });
