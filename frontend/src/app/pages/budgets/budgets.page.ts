@@ -33,6 +33,8 @@ export class BudgetsPage implements OnInit {
   isLoading = signal(false);
   errorMessage = signal<string | null>(null);
   successMessage = signal<string | null>(null);
+  showDeleteModal = signal(false);
+  deletingBudget = signal<BudgetResponse | null>(null);
 
   months = [
     { value: 1, label: 'Jan' },
@@ -132,11 +134,12 @@ export class BudgetsPage implements OnInit {
         .update(this.editingId, payload)
         .pipe(finalize(() => this.isLoading.set(false)))
         .subscribe({
-          next: () => {
+          next: (updated) => {
             this.successMessage.set('Budget mis a jour.');
+            this.budgets = this.budgets.map((b) => (b.id === updated.id ? updated : b));
             this.editingId = null;
             this.resetForm();
-            this.loadBudgets();
+            this.applyFilter();
           },
           error: (error) => {
             this.errorMessage.set(error?.error?.message ?? 'Mise a jour impossible.');
@@ -159,10 +162,11 @@ export class BudgetsPage implements OnInit {
       .create(userId, payload)
       .pipe(finalize(() => this.isLoading.set(false)))
       .subscribe({
-        next: () => {
+        next: (created) => {
           this.successMessage.set('Budget cree.');
+          this.budgets = [created, ...this.budgets];
           this.resetForm();
-          this.loadBudgets();
+          this.applyFilter();
         },
         error: (error) => {
           this.errorMessage.set(error?.error?.message ?? 'Creation impossible.');
@@ -185,9 +189,19 @@ export class BudgetsPage implements OnInit {
   }
 
   deleteBudget(budget: BudgetResponse): void {
-    if (!confirm('Supprimer ce budget ?')) {
-      return;
-    }
+    this.deletingBudget.set(budget);
+    this.showDeleteModal.set(true);
+  }
+
+  closeDeleteModal(): void {
+    this.showDeleteModal.set(false);
+    this.deletingBudget.set(null);
+  }
+
+  confirmDeleteBudget(): void {
+    const budget = this.deletingBudget();
+    if (!budget) return;
+
     this.isLoading.set(true);
     this.errorMessage.set(null);
     this.successMessage.set(null);
@@ -197,7 +211,9 @@ export class BudgetsPage implements OnInit {
       .subscribe({
         next: () => {
           this.successMessage.set('Budget supprime.');
-          this.loadBudgets();
+          this.budgets = this.budgets.filter((b) => b.id !== budget.id);
+          this.applyFilter();
+          this.closeDeleteModal();
         },
         error: (error) => {
           this.errorMessage.set(error?.error?.message ?? 'Suppression impossible.');
@@ -210,11 +226,17 @@ export class BudgetsPage implements OnInit {
     this.resetForm();
   }
 
-  getCategoryName(categoryId?: string): string {
-    if (!categoryId) {
+  getCategoryName(budget?: BudgetResponse | null): string {
+    if (!budget) {
+      return 'Uncategorized';
+    }
+    if (budget.isGlobal) {
       return 'Global';
     }
-    return this.categoryMap.get(categoryId)?.name ?? 'Categorie';
+    if (!budget.categoryId) {
+      return 'Uncategorized';
+    }
+    return this.categoryMap.get(budget.categoryId)?.name ?? 'Uncategorized';
   }
 
   getCategoryTag(budget: BudgetResponse): string {
@@ -267,9 +289,7 @@ export class BudgetsPage implements OnInit {
       }
       return b.month - a.month;
     });
-    this.filteredBudgets = sorted.filter(
-      (budget) => budget.month === Number(this.selectedMonth) && budget.year === Number(this.selectedYear)
-    );
+    this.filteredBudgets = sorted;
   }
 }
 
