@@ -48,8 +48,6 @@ export class DashboardPage implements OnInit {
   private rawStats = signal<any>(null);
   private rawExpenses = signal<any[]>([]);
   incomes = signal<any[]>([]);
-  private rawAllExpenses = signal<any[]>([]);
-  private rawAllIncomes = signal<any[]>([]);
   private rawCategories = signal<any[]>([]);
   private rawBudgets = signal<any[]>([]);
   private rawGoals = signal<any[]>([]);
@@ -59,8 +57,8 @@ export class DashboardPage implements OnInit {
   stats = computed(() => {
     const s = this.rawStats() || { totalIncome: 0, totalExpense: 0, net: 0, budgetRemaining: 0, budgetTotal: 0 };
     return [
-      { label: 'Total income', value: s.totalIncome, delta: 'All time', type: 'income' },
-      { label: 'Total expenses', value: s.totalExpense, delta: 'All time', type: 'expense' },
+      { label: 'Total income', value: s.totalIncome, delta: `Month ${this.selectedMonth()}/${this.selectedYear()}`, type: 'income' },
+      { label: 'Total expenses', value: s.totalExpense, delta: `Month ${this.selectedMonth()}/${this.selectedYear()}`, type: 'expense' },
       { label: 'Net balance', value: s.net, delta: s.net >= 0 ? 'Positive flow' : 'Negative flow', type: 'net' },
       { label: 'Budget remaining', value: s.budgetRemaining, delta: s.budgetTotal ? `${Math.round((s.budgetRemaining / s.budgetTotal) * 100)}% left` : `Month ${this.selectedMonth()}/${this.selectedYear()}`, type: 'budget' }
     ];
@@ -197,8 +195,6 @@ export class DashboardPage implements OnInit {
     const end = new Date(this.selectedYear(), this.selectedMonth(), 0).toISOString().split('T')[0];
 
     forkJoin({
-      allExpenses: this.expensesService.getByUser(userId).pipe(catchError(() => of([]))),
-      allIncomes: this.incomesService.getByUser(userId).pipe(catchError(() => of([]))),
       expenses: this.expensesService.getByUserDate(userId, start, end).pipe(catchError(() => of([]))),
       incomes: this.incomesService.getByUserDate(userId, start, end).pipe(catchError(() => of([]))),
       categories: this.categoriesService.getByUser(userId).pipe(catchError(() => of([]))),
@@ -206,8 +202,6 @@ export class DashboardPage implements OnInit {
       goals: this.goalsService.getByUser(userId).pipe(catchError(() => of([]))),
       recentTx: this.transactionsService.getTransactions(userId, 0, 5).pipe(catchError(() => of({ content: [] } as any)))
     }).pipe(finalize(() => this.isLoading.set(false))).subscribe(res => {
-      this.rawAllExpenses.set(res.allExpenses);
-      this.rawAllIncomes.set(res.allIncomes);
       this.rawExpenses.set(res.expenses);
       this.incomes.set(res.incomes);
       this.rawCategories.set(res.categories);
@@ -215,8 +209,8 @@ export class DashboardPage implements OnInit {
       this.rawGoals.set(res.goals);
       this.recentTransactions.set(res.recentTx?.content || []);
 
-      const totalIncome = (res.allIncomes || []).reduce((sum: number, i: any) => sum + (i.amount || 0), 0);
-      const totalExpense = (res.allExpenses || []).reduce((sum: number, e: any) => sum + (e.amount || 0), 0);
+      const totalIncome = (res.incomes || []).reduce((sum: number, i: any) => sum + (i.amount || 0), 0);
+      const totalExpense = (res.expenses || []).reduce((sum: number, e: any) => sum + (e.amount || 0), 0);
       const budgetItems = (res.budgets || []).filter((b: any) => b.month === this.selectedMonth() && b.year === this.selectedYear());
       const budgetTotal = budgetItems.reduce((sum: number, b: any) => sum + (b.budgetAmount || 0), 0);
       const budgetSpent = (res.expenses || []).reduce((sum: number, e: any) => sum + (e.amount || 0), 0);
