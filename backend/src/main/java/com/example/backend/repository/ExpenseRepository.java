@@ -3,6 +3,7 @@ package com.example.backend.repository;
 import com.example.backend.Entity.Expense;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
@@ -29,4 +30,8 @@ public interface ExpenseRepository extends JpaRepository<Expense, String> {
 
     @Query("select coalesce(sum(e.amount), 0) from Expense e")
     BigDecimal sumAll();
+
+    @Modifying
+    @Query("update Expense e set e.category = null where e.category.id = :categoryId")
+    int clearCategoryById(@Param("categoryId") String categoryId);
 }

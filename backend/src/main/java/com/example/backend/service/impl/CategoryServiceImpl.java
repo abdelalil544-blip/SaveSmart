@@ -8,10 +8,14 @@ import com.example.backend.dto.category.CategoryResponseDTO;
 import com.example.backend.dto.category.CategoryUpdateDTO;
 import com.example.backend.exception.ResourceNotFoundException;
 import com.example.backend.mapper.CategoryMapper;
+import com.example.backend.repository.BudgetRepository;
+import com.example.backend.repository.ExpenseRepository;
+import com.example.backend.repository.IncomeRepository;
 import com.example.backend.repository.CategoryRepository;
 import com.example.backend.repository.UserRepository;
 import com.example.backend.service.CategoryService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -22,15 +26,24 @@ public class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
     private final CategoryMapper categoryMapper;
+    private final IncomeRepository incomeRepository;
+    private final ExpenseRepository expenseRepository;
+    private final BudgetRepository budgetRepository;
 
     public CategoryServiceImpl(
             CategoryRepository categoryRepository,
             UserRepository userRepository,
-            CategoryMapper categoryMapper
+            CategoryMapper categoryMapper,
+            IncomeRepository incomeRepository,
+            ExpenseRepository expenseRepository,
+            BudgetRepository budgetRepository
     ) {
         this.categoryRepository = categoryRepository;
         this.userRepository = userRepository;
         this.categoryMapper = categoryMapper;
+        this.incomeRepository = incomeRepository;
+        this.expenseRepository = expenseRepository;
+        this.budgetRepository = budgetRepository;
     }
 
     @Override
@@ -76,7 +89,11 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @Transactional
     public void deleteById(String id) {
+        incomeRepository.clearCategoryById(id);
+        expenseRepository.clearCategoryById(id);
+        budgetRepository.clearCategoryById(id);
         categoryRepository.deleteById(id);
     }
 

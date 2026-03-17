@@ -3,6 +3,7 @@ package com.example.backend.repository;
 import com.example.backend.Entity.Income;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
@@ -29,4 +30,8 @@ public interface IncomeRepository extends JpaRepository<Income, String> {
 
     @Query("select coalesce(sum(i.amount), 0) from Income i")
     BigDecimal sumAll();
+
+    @Modifying
+    @Query("update Income i set i.category = null where i.category.id = :categoryId")
+    int clearCategoryById(@Param("categoryId") String categoryId);
 }

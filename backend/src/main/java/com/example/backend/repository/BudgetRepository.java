@@ -3,6 +3,7 @@ package com.example.backend.repository;
 import com.example.backend.Entity.Budget;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.repository.query.Param;
 
 import java.math.BigDecimal;
@@ -38,4 +39,8 @@ public interface BudgetRepository extends JpaRepository<Budget, String> {
 
     @Query("select coalesce(sum(b.budgetAmount), 0) from Budget b")
     BigDecimal sumAll();
+
+    @Modifying
+    @Query("update Budget b set b.category = null where b.category.id = :categoryId")
+    int clearCategoryById(@Param("categoryId") String categoryId);
 }
