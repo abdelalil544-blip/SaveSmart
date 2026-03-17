@@ -38,6 +38,17 @@ export class TimelinePage implements OnInit {
   pageSize = 10;
   totalElements = signal(0);
 
+  // Period filter
+  selectedMonth = signal(new Date().getMonth() + 1);
+  selectedYear = signal(new Date().getFullYear());
+  months = [
+    { value: 1, label: 'Jan' }, { value: 2, label: 'Feb' }, { value: 3, label: 'Mar' },
+    { value: 4, label: 'Apr' }, { value: 5, label: 'May' }, { value: 6, label: 'Jun' },
+    { value: 7, label: 'Jul' }, { value: 8, label: 'Aug' }, { value: 9, label: 'Sep' },
+    { value: 10, label: 'Oct' }, { value: 11, label: 'Nov' }, { value: 12, label: 'Dec' }
+  ];
+  years = Array.from({ length: 5 }, (_, i) => this.selectedYear() - 2 + i);
+
   constructor(
     private transactionsService: TransactionsService,
     private categoriesService: CategoriesService,
@@ -61,7 +72,10 @@ export class TimelinePage implements OnInit {
     this.isLoading.set(true);
     this.errorMessage.set(null);
 
-    this.transactionsService.getTransactions(userId, page, this.pageSize)
+    const start = new Date(this.selectedYear(), this.selectedMonth() - 1, 1).toISOString().split('T')[0];
+    const end = new Date(this.selectedYear(), this.selectedMonth(), 0).toISOString().split('T')[0];
+
+    this.transactionsService.getTransactions(userId, page, this.pageSize, start, end)
       .pipe(finalize(() => this.isLoading.set(false)))
       .subscribe({
         next: (res) => {
@@ -150,6 +164,13 @@ export class TimelinePage implements OnInit {
     if (this.currentPage() > 0) {
       this.loadTransactions(this.currentPage() - 1);
     }
+  }
+
+  resetFilters(): void {
+    const now = new Date();
+    this.selectedMonth.set(now.getMonth() + 1);
+    this.selectedYear.set(now.getFullYear());
+    this.loadTransactions(0);
   }
 
   formatDate(dateStr: string): string {

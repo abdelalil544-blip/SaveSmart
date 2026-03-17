@@ -6,11 +6,33 @@
       <h1 class="text-2xl font-black tracking-tight" style="color:#0f1e3c">Transactions</h1>
       <p class="text-xs font-medium uppercase tracking-widest text-slate-400">All income and expenses</p>
     </div>
-    <button type="button" (click)="openTransactionModal()"
-            class="h-10 rounded-xl px-5 text-[10px] font-black uppercase tracking-widest text-white shadow-sm transition hover:opacity-90 active:scale-95"
-            style="background:linear-gradient(135deg,#0f1e3c,#1e40af)">
-      New Entry
-    </button>
+    <div class="flex flex-wrap items-center gap-2">
+      <div class="inline-flex items-center gap-2 rounded-xl border border-blue-100 bg-blue-50 px-4 py-2.5 shadow-sm">
+        <span class="text-[10px] font-black uppercase tracking-widest text-blue-400">Month</span>
+        <div class="h-3 w-px bg-blue-200"></div>
+        <select class="bg-transparent text-xs font-bold text-blue-900 outline-none cursor-pointer"
+                [ngModel]="selectedMonth()" (ngModelChange)="selectedMonth.set($event); loadTransactions(0)">
+          @for (month of months; track month.value) {
+          <option [ngValue]="month.value">{{ month.label }}</option>
+          }
+        </select>
+        <select class="bg-transparent text-xs font-bold text-blue-900 outline-none cursor-pointer"
+                [ngModel]="selectedYear()" (ngModelChange)="selectedYear.set($event); loadTransactions(0)">
+          @for (year of years; track year) {
+          <option [ngValue]="year">{{ year }}</option>
+          }
+        </select>
+      </div>
+      <button (click)="resetFilters()"
+              class="flex h-10 items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-xs font-black uppercase tracking-widest text-slate-500 shadow-sm transition hover:bg-slate-50 hover:border-slate-300 active:scale-95">
+        Reset
+      </button>
+      <button type="button" (click)="openTransactionModal()"
+              class="h-10 rounded-xl px-5 text-[10px] font-black uppercase tracking-widest text-white shadow-sm transition hover:opacity-90 active:scale-95"
+              style="background:linear-gradient(135deg,#0f1e3c,#1e40af)">
+        New Entry
+      </button>
+    </div>
   </header>
 
   <!-- Error -->

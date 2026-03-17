@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 import { API_BASE_URL } from '../core/api.config';
@@ -11,9 +11,14 @@ export class TransactionsService {
 
     constructor(private http: HttpClient) { }
 
-    getTransactions(userId: string, page: number = 0, size: number = 10): Observable<PagedResponse<TransactionResponse>> {
-        return this.http.get<PagedResponse<TransactionResponse>>(`${this.api}/api/transactions`, {
-            params: { userId, page: page.toString(), size: size.toString() }
-        });
+    getTransactions(userId: string, page: number = 0, size: number = 10, startDate?: string, endDate?: string): Observable<PagedResponse<TransactionResponse>> {
+        let params = new HttpParams()
+            .set('userId', userId)
+            .set('page', page.toString())
+            .set('size', size.toString());
+        if (startDate && endDate) {
+            params = params.set('startDate', startDate).set('endDate', endDate);
+        }
+        return this.http.get<PagedResponse<TransactionResponse>>(`${this.api}/api/transactions`, { params });
     }
 }

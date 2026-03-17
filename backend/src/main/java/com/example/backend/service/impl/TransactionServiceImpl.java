@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.time.LocalDate;
 import java.util.stream.Collectors;
 
 @Service
@@ -28,9 +29,16 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public Page<TransactionResponseDTO> getTransactionsByUser(String userId, Pageable pageable) {
-        List<Income> incomes = incomeRepository.findByUserId(userId);
-        List<Expense> expenses = expenseRepository.findByUserId(userId);
+    public Page<TransactionResponseDTO> getTransactionsByUser(String userId, LocalDate startDate, LocalDate endDate, Pageable pageable) {
+        List<Income> incomes;
+        List<Expense> expenses;
+        if (startDate != null && endDate != null) {
+            incomes = incomeRepository.findByUserIdAndDateBetween(userId, startDate, endDate);
+            expenses = expenseRepository.findByUserIdAndDateBetween(userId, startDate, endDate);
+        } else {
+            incomes = incomeRepository.findByUserId(userId);
+            expenses = expenseRepository.findByUserId(userId);
+        }
 
         List<TransactionResponseDTO> allTransactions = new ArrayList<>();
 
