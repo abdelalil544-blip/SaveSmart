@@ -21,6 +21,8 @@ export class GoalsPage implements OnInit {
   isLoading = signal(false);
   isSaving = signal(false);
   errorMessage = signal<string | null>(null);
+  showDeleteModal = signal(false);
+  deletingGoal = signal<SavingGoalResponse | null>(null);
 
   // Form state
   today = new Date().toISOString().split('T')[0];
@@ -130,10 +132,25 @@ export class GoalsPage implements OnInit {
   }
 
   deleteGoal(id: string) {
-    if (!confirm('Are you sure you want to delete this goal?')) return;
+    const goal = this.goals().find(g => g.id === id) || null;
+    this.deletingGoal.set(goal);
+    this.showDeleteModal.set(true);
+  }
 
-    this.goalsService.delete(id).subscribe({
-      next: () => this.loadGoals(),
+  closeDeleteModal() {
+    this.showDeleteModal.set(false);
+    this.deletingGoal.set(null);
+  }
+
+  confirmDeleteGoal() {
+    const goal = this.deletingGoal();
+    if (!goal) return;
+
+    this.goalsService.delete(goal.id).subscribe({
+      next: () => {
+        this.loadGoals();
+        this.closeDeleteModal();
+      },
       error: () => this.errorMessage.set('Failed to delete goal.')
     });
   }
