@@ -7,5 +7,5 @@ import org.springframework.data.domain.Pageable;
 import java.time.LocalDate;
 
 public interface TransactionService {
-    Page<TransactionResponseDTO> getTransactionsByUser(String userId, LocalDate startDate, LocalDate endDate, Pageable pageable);
+    Page<TransactionResponseDTO> getTransactionsByUser(String userId, LocalDate startDate, LocalDate endDate, String type, Pageable pageable);
 }

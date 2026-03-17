@@ -23,25 +23,36 @@ export class TimelinePage implements OnInit {
   errorMessage = signal<string | null>(null);
   successMessage = signal<string | null>(null);
   showTransactionModal = signal(false);
+  showEditModal = signal(false);
+  showDeleteModal = signal(false);
+  editingTransaction = signal<TransactionResponse | null>(null);
+  deletingTransaction = signal<TransactionResponse | null>(null);
 
   // Transaction Form
   transactionForm = { type: 'EXPENSE' as 'INCOME' | 'EXPENSE', amount: null as number | null, categoryId: '', date: new Date().toISOString().split('T')[0], description: '' };
+  editForm = { amount: null as number | null, categoryId: '', date: '', description: '' };
   rawCategories = signal<CategoryResponse[]>([]);
 
   get filteredCategories() {
     return this.rawCategories().filter(c => c.type === this.transactionForm.type);
   }
 
+  getCategoriesForType(type: 'INCOME' | 'EXPENSE') {
+    return this.rawCategories().filter(c => c.type === type);
+  }
+
   // Pagination
   currentPage = signal(0);
   totalPages = signal(0);
-  pageSize = 10;
+  pageSize = 8;
   totalElements = signal(0);
 
-  // Period filter
-  selectedMonth = signal(new Date().getMonth() + 1);
+  // Filters
+  selectedMonth = signal(0);
   selectedYear = signal(new Date().getFullYear());
+  typeFilter = signal<'ALL' | 'INCOME' | 'EXPENSE'>('ALL');
   months = [
+    { value: 0, label: 'All months' },
     { value: 1, label: 'Jan' }, { value: 2, label: 'Feb' }, { value: 3, label: 'Mar' },
     { value: 4, label: 'Apr' }, { value: 5, label: 'May' }, { value: 6, label: 'Jun' },
     { value: 7, label: 'Jul' }, { value: 8, label: 'Aug' }, { value: 9, label: 'Sep' },
@@ -72,10 +83,11 @@ export class TimelinePage implements OnInit {
     this.isLoading.set(true);
     this.errorMessage.set(null);
 
-    const start = new Date(this.selectedYear(), this.selectedMonth() - 1, 1).toISOString().split('T')[0];
-    const end = new Date(this.selectedYear(), this.selectedMonth(), 0).toISOString().split('T')[0];
+    const month = this.selectedMonth();
+    const start = month ? new Date(this.selectedYear(), month - 1, 1).toISOString().split('T')[0] : undefined;
+    const end = month ? new Date(this.selectedYear(), month, 0).toISOString().split('T')[0] : undefined;
 
-    this.transactionsService.getTransactions(userId, page, this.pageSize, start, end)
+    this.transactionsService.getTransactions(userId, page, this.pageSize, start, end, this.typeFilter())
       .pipe(finalize(() => this.isLoading.set(false)))
       .subscribe({
         next: (res) => {
@@ -139,6 +151,81 @@ export class TimelinePage implements OnInit {
     this.showTransactionModal.set(false);
   }
 
+  openEditModal(tx: TransactionResponse) {
+    this.editingTransaction.set(tx);
+    this.editForm = {
+      amount: tx.amount || null,
+      categoryId: tx.categoryId || '',
+      date: tx.date || new Date().toISOString().split('T')[0],
+      description: tx.description || ''
+    };
+    this.showEditModal.set(true);
+  }
+
+  closeEditModal() {
+    this.showEditModal.set(false);
+    this.editingTransaction.set(null);
+  }
+
+  saveTransactionEdit() {
+    const tx = this.editingTransaction();
+    if (!tx) return;
+    if (!this.editForm.amount || !this.editForm.categoryId || !this.editForm.date) {
+      this.errorMessage.set('All fields are mandatory.');
+      return;
+    }
+
+    const payload = {
+      amount: this.editForm.amount as number,
+      date: this.editForm.date,
+      description: this.editForm.description,
+      categoryId: this.editForm.categoryId
+    };
+    const service = tx.type === 'INCOME' ? this.incomesService : this.expensesService;
+    this.isSaving.set(true);
+    service.update(tx.id, payload).pipe(finalize(() => this.isSaving.set(false))).subscribe({
+      next: () => {
+        this.successMessage.set('Transaction updated.');
+        this.closeEditModal();
+        this.loadTransactions(this.currentPage());
+        setTimeout(() => this.successMessage.set(null), 5000);
+      },
+      error: () => {
+        this.errorMessage.set('Failed to update transaction.');
+        setTimeout(() => this.errorMessage.set(null), 5000);
+      }
+    });
+  }
+
+  openDeleteModal(tx: TransactionResponse) {
+    this.deletingTransaction.set(tx);
+    this.showDeleteModal.set(true);
+  }
+
+  closeDeleteModal() {
+    this.showDeleteModal.set(false);
+    this.deletingTransaction.set(null);
+  }
+
+  confirmDeleteTransaction() {
+    const tx = this.deletingTransaction();
+    if (!tx) return;
+    const service = tx.type === 'INCOME' ? this.incomesService : this.expensesService;
+    this.isSaving.set(true);
+    service.delete(tx.id).pipe(finalize(() => this.isSaving.set(false))).subscribe({
+      next: () => {
+        this.successMessage.set('Transaction deleted.');
+        this.closeDeleteModal();
+        this.loadTransactions(this.currentPage());
+        setTimeout(() => this.successMessage.set(null), 5000);
+      },
+      error: () => {
+        this.errorMessage.set('Failed to delete transaction.');
+        setTimeout(() => this.errorMessage.set(null), 5000);
+      }
+    });
+  }
+
   clearMessages() {
     this.errorMessage.set(null);
     this.successMessage.set(null);
@@ -168,8 +255,9 @@ export class TimelinePage implements OnInit {
 
   resetFilters(): void {
     const now = new Date();
-    this.selectedMonth.set(now.getMonth() + 1);
+    this.selectedMonth.set(0);
     this.selectedYear.set(now.getFullYear());
+    this.typeFilter.set('ALL');
     this.loadTransactions(0);
   }
 

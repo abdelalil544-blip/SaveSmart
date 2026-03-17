@@ -11,11 +11,12 @@ export class TransactionsService {
 
     constructor(private http: HttpClient) { }
 
-    getTransactions(userId: string, page: number = 0, size: number = 10, startDate?: string, endDate?: string): Observable<PagedResponse<TransactionResponse>> {
+    getTransactions(userId: string, page: number = 0, size: number = 10, startDate?: string, endDate?: string, type: string = 'ALL'): Observable<PagedResponse<TransactionResponse>> {
         let params = new HttpParams()
             .set('userId', userId)
             .set('page', page.toString())
-            .set('size', size.toString());
+            .set('size', size.toString())
+            .set('type', type);
         if (startDate && endDate) {
             params = params.set('startDate', startDate).set('endDate', endDate);
         }

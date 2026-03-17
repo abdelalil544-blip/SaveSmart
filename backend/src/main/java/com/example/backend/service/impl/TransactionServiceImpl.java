@@ -29,7 +29,7 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public Page<TransactionResponseDTO> getTransactionsByUser(String userId, LocalDate startDate, LocalDate endDate, Pageable pageable) {
+    public Page<TransactionResponseDTO> getTransactionsByUser(String userId, LocalDate startDate, LocalDate endDate, String type, Pageable pageable) {
         List<Income> incomes;
         List<Expense> expenses;
         if (startDate != null && endDate != null) {
@@ -42,7 +42,8 @@ public class TransactionServiceImpl implements TransactionService {
 
         List<TransactionResponseDTO> allTransactions = new ArrayList<>();
 
-        allTransactions.addAll(incomes.stream()
+        if (type == null || type.equalsIgnoreCase("INCOME") || type.equalsIgnoreCase("ALL")) {
+            allTransactions.addAll(incomes.stream()
                 .map(i -> TransactionResponseDTO.builder()
                         .id(i.getId())
                         .amount(i.getAmount())
@@ -54,8 +55,10 @@ public class TransactionServiceImpl implements TransactionService {
                         .type("INCOME")
                         .build())
                 .collect(Collectors.toList()));
+        }
 
-        allTransactions.addAll(expenses.stream()
+        if (type == null || type.equalsIgnoreCase("EXPENSE") || type.equalsIgnoreCase("ALL")) {
+            allTransactions.addAll(expenses.stream()
                 .map(e -> TransactionResponseDTO.builder()
                         .id(e.getId())
                         .amount(e.getAmount())
@@ -67,6 +70,7 @@ public class TransactionServiceImpl implements TransactionService {
                         .type("EXPENSE")
                         .build())
                 .collect(Collectors.toList()));
+        }
 
         // Sort by date DESC
         allTransactions.sort(Comparator.comparing(TransactionResponseDTO::getDate).reversed());

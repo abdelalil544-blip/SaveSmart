@@ -31,7 +31,8 @@ public class TransactionController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
-        return ResponseEntity.ok(transactionService.getTransactionsByUser(userId, startDate, endDate, PageRequest.of(page, size)));
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
+            @RequestParam(required = false, defaultValue = "ALL") String type) {
+        return ResponseEntity.ok(transactionService.getTransactionsByUser(userId, startDate, endDate, type, PageRequest.of(page, size)));
     }
 }
