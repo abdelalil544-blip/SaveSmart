@@ -48,7 +48,7 @@ export class RegisterPage {
             this.tokenService.setTokens(response.accessToken, response.refreshToken, response.user?.id, response.user?.role);
             this.successMessage.set('Compte cree avec succes.');
             this.isLoading.set(false);
-            this.router.navigateByUrl('/');
+            this.router.navigateByUrl('/app/dashboard');
           },
           error: (error) => {
             this.isLoading.set(false);
