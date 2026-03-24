@@ -23,12 +23,16 @@ public class CustomUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found: " + email));
+        String password = user.getPassword();
+        if (password == null || password.isBlank()) {
+            password = "oauth2-user";
+        }
         List<SimpleGrantedAuthority> authorities = user.getRole() == null
                 ? List.of()
                 : List.of(new SimpleGrantedAuthority(user.getRole().name()));
         return new org.springframework.security.core.userdetails.User(
                 user.getEmail(),
-                user.getPassword(),
+                password,
                 user.getActive() != null && user.getActive(),
                 true,
                 true,
